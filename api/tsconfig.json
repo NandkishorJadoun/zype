@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
+    "rootDir": "src",
+    "outDir": "dist",
 
     "module": "ESNext",
     "lib": ["esnext"],
@@ -25,5 +25,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "exclude": ["eslint.config.ts", "prisma.config.ts", "generated", "tests"]
+  "exclude": ["eslint.config.ts", "prisma.config.ts", "generated", "tests", "node_modules", "dist"]
 }

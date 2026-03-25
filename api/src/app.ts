@@ -1,6 +1,7 @@
 import cors from "cors";
 import express, { json, urlencoded, type Express, type Request, type Response, type NextFunction } from "express";
 import { authRouter } from "./routes/auth.router";
+import { usersRouter } from "./routes/users.router";
 import { Prisma } from "@prisma/client";
 
 export const app: Express = express()
@@ -11,8 +12,10 @@ app.use(urlencoded({ extended: false }))
 
 app.get("/", (_req, res) => res.json({ message: "Server is running..." }))
 app.use("/auth", authRouter)
+app.use("/users", usersRouter)
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    console.error("[Error Handler]", err)
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
         const prismaError = err as Prisma.PrismaClientKnownRequestError
         if (prismaError.code === "P2002") {

@@ -104,8 +104,6 @@ describe("POST /auth/signin", () => {
                 password: "12345678"
             })
 
-        console.log(res.body)
-
         expect(res.headers["content-type"]).match(/json/)
         expect(res.status).toBe(200)
     })

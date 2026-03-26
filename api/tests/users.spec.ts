@@ -190,4 +190,40 @@ describe("GET /users/:userId", () => {
 
 })
 
+describe("PATCH /users/me", () => {
+    let token = "";
+    beforeEach(async () => {
+        const login = await request(app).post("/auth/signin").type("form").send({
+            email: "user1@example.com",
+            password: "12345678"
+        })
 
+        token = login.body.token;
+    })
+
+    it("should update username for user1", async () => {
+        const res = await await request(app)
+            .patch("/users/me")
+            .set("Authorization", `Bearer ${token}`)
+            .type("form")
+            .send({
+                username: "updatedUser1"
+            })
+
+        expect(res.status).toBe(200)
+        expect(res.body.user).toEqual(expect.objectContaining({ username: "updatedUser1", email: 'user1@example.com' }))
+    })
+
+    it("should throw error when input username that is already used/ not unique", async () => {
+        const res = await await request(app)
+            .patch("/users/me")
+            .set("Authorization", `Bearer ${token}`)
+            .type("form")
+            .send({
+                username: "user2"
+            })
+
+        expect(res.status).toBe(409)
+        expect(res.body).toEqual({ message: "Username is unavailable" })
+    })
+})

@@ -1,5 +1,5 @@
 import { app } from '../src/app'
-import { expect, describe, it, beforeAll, afterAll } from 'vitest'
+import { expect, describe, it, beforeAll, afterAll, beforeEach } from 'vitest'
 import request from "supertest"
 import { prisma } from "../src/libs/prisma"
 import bcrypt from 'bcryptjs'
@@ -31,7 +31,7 @@ beforeAll(async () => {
         ]
     })
 
-    // create chat between user1 and user2
+    // create chat between userX and userY
 
     const createChat12 = prisma.chat.create({
         data: {
@@ -147,21 +147,45 @@ describe("GET /users", () => {
 })
 
 describe("GET /users/:userId", () => {
-
-    it("shows the profile of the user1", async () => {
+    let token = "";
+    beforeEach(async () => {
         const login = await request(app).post("/auth/signin").type("form").send({
             email: "user1@example.com",
             password: "12345678"
         })
 
-        const { token } = login.body;
-        const userId = login.body.user.id;
+        token = login.body.token;
+    })
 
-        const res = await request(app).get(`/users/${userId}`).set('Authorization', `Bearer ${token}`)
+    it("shows the profile of the our own", async () => {
+
+        // get the user to test with userId
+
+        const user = await prisma.user.findUnique({ where: { email: 'user1@example.com' }, select: { id: true } });
+        const res = await request(app).get(`/users/${user?.id}`).set('Authorization', `Bearer ${token}`)
 
         expect(res.status).toBe(200)
         expect(res.body.user).toEqual(expect.objectContaining({ email: 'user1@example.com' })
         )
+    })
+
+    it("shows the profile of the other users", async () => {
+
+        const user = await prisma.user.findUnique({ where: { email: 'user2@example.com' }, select: { id: true } });
+        const res = await request(app).get(`/users/${user?.id}`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(200)
+        expect(res.body.user).toEqual(expect.objectContaining({ email: 'user2@example.com' })
+        )
+    })
+
+    it("throws 404 when the user with given userid don't exist", async () => {
+        const userId = "fakeId"
+
+        const res = await request(app).get(`/users/${userId}`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(404)
+        expect(res.body).toEqual({ message: 'User with ID "fakeId" not found' })
     })
 
 })

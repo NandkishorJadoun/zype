@@ -5,7 +5,7 @@ import { prisma } from "../libs/prisma";
 import { passport } from "../libs/passport"
 import jwt from "jsonwebtoken";
 import { env } from "../schemas/env.schema";
-import type { User } from "@prisma/client";
+import { Prisma, type User } from "@prisma/client";
 
 const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
   const { body } = req;
@@ -30,6 +30,13 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(201).json({ message: "User registered successfully" })
 
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const prismaError = error as Prisma.PrismaClientKnownRequestError
+      if (prismaError.code === "P2002") {
+        return res.status(409).json({ message: "Email Already Registered" })
+      }
+    }
+
     next(error)
   }
 }

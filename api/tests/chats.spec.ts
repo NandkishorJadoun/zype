@@ -137,11 +137,46 @@ describe("GET /chats/:chatId", async () => {
 
         const res = await request(app).get(`/chats/${user1Chat?.id}`).set('Authorization', `Bearer ${token}`)
 
-        console.log(res.body)
-
         expect(res.status).toBe(200)
         expect(res.body.chat.id).toBe(user1Chat?.id)
         expect(res.body.chat.users).toHaveLength(2)
+    })
+})
+
+describe("DELETE /chats/:chatId", async () => {
+    let token = "";
+    beforeEach(async () => {
+        const login = await request(app).post("/auth/signin").type("form").send({
+            email: "user1@example.com",
+            password: "12345678"
+        })
+
+        token = login.body.token;
+    })
+
+    it("should throw error when id is invalid", async () => {
+
+        const chatId = "FakeChatId"
+        const res = await request(app).delete(`/chats/${chatId}`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(404)
+        expect(res.body).toEqual({ message: 'Chat with ID "FakeChatId" not found' })
+    })
+
+    it("show messages when id is correct", async () => {
+
+        const user1Chat = await prisma.chat.findFirst({
+            where: {
+                users: {
+                    some: { email: "user1@example.com" }
+                }
+            },
+        })
+
+        const res = await request(app).delete(`/chats/${user1Chat?.id}`).set('Authorization', `Bearer ${token}`)
+
+        console.log(res.body)
+        expect(res.status).toBe(204)
     })
 })
 

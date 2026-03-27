@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../libs/prisma";
+import { Prisma } from "@prisma/client";
 
 const getChats = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -67,6 +68,33 @@ const getUserChat = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const deleteUserChat = async (req: Request, res: Response, next: NextFunction) => {
+
+    const { chatId } = req.params;
+
+    if (Array.isArray(chatId) || !chatId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    try {
+        await prisma.chat.delete({
+            where: {
+                id: chatId
+            }
+        })
+
+        return res.status(204).send()
+
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError
+            if (prismaError.code === "P2025") {
+                return res.status(404).json({ message: `Chat with ID "${chatId}" not found` })
+            }
+        }
+        next(error)
+    }
+}
 
 
-export { getChats, getUserChat }
+export { getChats, getUserChat, deleteUserChat }

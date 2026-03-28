@@ -72,7 +72,9 @@ beforeAll(async () => {
 afterAll(async () => {
     const deleteUsers = prisma.user.deleteMany({});
     const deleteChats = prisma.chat.deleteMany({});
-    await prisma.$transaction([deleteChats, deleteUsers]);
+    const deleteMessages = prisma.message.deleteMany({});
+
+    await prisma.$transaction([deleteMessages, deleteChats, deleteUsers]);
 })
 
 describe("GET /chats", async () => {
@@ -180,7 +182,7 @@ describe("DELETE /chats/:chatId", async () => {
     })
 })
 
-/* describe("GET /chats/user/:userId", async () => {
+describe("POST /chats/:chatId", async () => {
     let token = "";
     beforeEach(async () => {
         const login = await request(app).post("/auth/signin").type("form").send({
@@ -191,7 +193,38 @@ describe("DELETE /chats/:chatId", async () => {
         token = login.body.token;
     })
 
-    it("show chat between user1 and user2", async () => {
+    it("should create a new message", async () => {
+
+        const user1Chat = await prisma.chat.findFirst({
+            where: {
+                users: {
+                    some: { email: "user1@example.com" }
+                }
+            }
+        })
+
+        const res = await request(app).post(`/chats/${user1Chat?.id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .type("form")
+            .send({ message: "Hi" })
+
+        expect(res.status).toBe(201)
+        expect(res.body).toEqual(expect.objectContaining({ data: "Hi" }))
+    })
+})
+
+/* describe("POST /chats/user/:userId", async () => {
+    let token = "";
+    beforeEach(async () => {
+        const login = await request(app).post("/auth/signin").type("form").send({
+            email: "user1@example.com",
+            password: "12345678"
+        })
+
+        token = login.body.token;
+    })
+
+    it("create ", async () => {
         const receiver = await prisma.user.findUnique({ where: { email: 'user2@example.com' }, select: { id: true } });
 
         const res = await request(app).get(`/chats/user/${receiver?.id}`).set('Authorization', `Bearer ${token}`)

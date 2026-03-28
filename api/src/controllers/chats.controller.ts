@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../libs/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, type Chat } from "@prisma/client";
 
-const getChats = async (req: Request, res: Response, next: NextFunction) => {
+export const getChats = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -41,12 +41,12 @@ const getChats = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const getUserChat = async (req: Request, res: Response, next: NextFunction) => {
+export const getChat = async (req: Request, res: Response, next: NextFunction) => {
 
     const { chatId } = req.params;
 
     if (Array.isArray(chatId) || !chatId) {
-        return res.status(400).json({ message: "Invalid User ID" })
+        return res.status(400).json({ message: "Invalid Chat ID" })
     }
 
     try {
@@ -68,12 +68,42 @@ const getUserChat = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const deleteUserChat = async (req: Request, res: Response, next: NextFunction) => {
+export const postChat = async (req: Request, res: Response, next: NextFunction) => {
+
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const userId = req.user.id
+
+    if (Array.isArray(req.params.chatId) || !req.params.chatId) {
+        return res.status(400).json({ message: "Invalid Chat ID" })
+    }
+
+    const { chatId } = req.params;
+
+    const msg = req.body.message;
+
+    try {
+        const message = await prisma.message.create({
+            data: {
+                userId, chatId, data: msg
+            }
+        })
+
+        res.status(201).json(message)
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteChat = async (req: Request, res: Response, next: NextFunction) => {
 
     const { chatId } = req.params;
 
     if (Array.isArray(chatId) || !chatId) {
-        return res.status(400).json({ message: "Invalid User ID" })
+        return res.status(400).json({ message: "Invalid Chat ID" })
     }
 
     try {
@@ -96,5 +126,132 @@ const deleteUserChat = async (req: Request, res: Response, next: NextFunction) =
     }
 }
 
+export const getUserChat = async (req: Request, res: Response, next: NextFunction) => {
 
-export { getChats, getUserChat, deleteUserChat }
+    if (Array.isArray(req.params.userId) || !req.params.userId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    const receiverId = req.params.userId;
+
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const senderId = req.user.id;
+
+    if (senderId === receiverId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    try {
+        const chat = await prisma.chat.findFirst({
+            where: {
+                AND: [
+                    {
+                        users: {
+                            some: {
+                                id: senderId
+                            }
+                        }
+                    },
+                    {
+                        users: {
+                            some: {
+                                id: receiverId
+                            }
+                        }
+                    }
+                ]
+            }
+
+        })
+
+        res.status(200).json(chat)
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const createUserChat = async (req: Request, res: Response, next: NextFunction) => {
+
+    if (Array.isArray(req.params.userId) || !req.params.userId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    const receiverId = req.params.userId;
+
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const senderId = req.user.id;
+
+    if (senderId === receiverId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    const message = req.body.message;
+
+    let chat: Chat | null;
+
+    try {
+        // check if chat already exist, if exist then get the id and add message in it
+
+        chat = await prisma.chat.findFirst({
+            where: {
+                AND: [
+                    {
+                        users: {
+                            some: {
+                                id: senderId
+                            }
+                        }
+                    },
+                    {
+                        users: {
+                            some: {
+                                id: receiverId
+                            }
+                        }
+                    }
+                ]
+            }
+
+        })
+
+        // if chat not created, create it with adding message
+
+        if (!chat) {
+            chat = await prisma.chat.create({
+                data: {
+                    users: {
+                        connect: [{ id: senderId }, { id: receiverId }]
+                    },
+                    messages: {
+                        create: {
+                            userId: senderId,
+                            data: message
+                        }
+                    }
+                }
+            })
+
+            return res.status(201).json(chat)
+        }
+
+        await prisma.message.create({
+            data: {
+                data: message,
+                userId: senderId,
+                chatId: chat.id
+            }
+        })
+
+        res.status(201).json(chat)
+
+    } catch (error) {
+        next(error)
+    }
+}

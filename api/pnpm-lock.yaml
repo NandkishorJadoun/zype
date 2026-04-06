@@ -14,6 +14,9 @@ importers:
       '@prisma/client':
         specifier: ^7.5.0
         version: 7.5.0(prisma@7.5.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2)
+      '@prisma/client-runtime-utils':
+        specifier: ^7.6.0
+        version: 7.6.0
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -382,6 +385,9 @@ packages:
 
   '@prisma/client-runtime-utils@7.5.0':
     resolution: {integrity: sha512-KnJ2b4Si/pcWEtK68uM+h0h1oh80CZt2suhLTVuLaSKg4n58Q9jBF/A42Kw6Ma+aThy1yAhfDeTC0JvEmeZnFQ==}
+
+  '@prisma/client-runtime-utils@7.6.0':
+    resolution: {integrity: sha512-fD7jlqubsZvVODKvsp9lOpXVecx2aWGxC2l35Ioz2t+teUJ5CfR0SAMsi7UkU1VvaZmmm+DS6BdujF622nY7tQ==}
 
   '@prisma/client@7.5.0':
     resolution: {integrity: sha512-h4hF9ctp+kSRs7ENHGsFQmHAgHcfkOCxbYt6Ti9Xi8x7D+kP4tTi9x51UKmiTH/OqdyJAO+8V+r+JA5AWdav7w==}
@@ -2181,6 +2187,8 @@ snapshots:
       - pg-native
 
   '@prisma/client-runtime-utils@7.5.0': {}
+
+  '@prisma/client-runtime-utils@7.6.0': {}
 
   '@prisma/client@7.5.0(prisma@7.5.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2)':
     dependencies:

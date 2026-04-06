@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
+    "dev": "pnpx tsx watch src/server.ts",
     "typecheck": "tsgo --noEmit",
     "build": "tsgo --build"
   },
@@ -37,6 +38,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
+    "@prisma/client-runtime-utils": "^7.6.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",

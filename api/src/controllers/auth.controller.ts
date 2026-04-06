@@ -12,7 +12,7 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
   const userForm = UserFormData.safeParse(body)
 
   if (!userForm.success) {
-    return res.status(422).json({ errors: userForm.error.issues.map(issue => Object({ message: issue.message })) })
+    return res.status(422).json({ errors: userForm.error.issues.map(issue => Object({ fieldName: issue.path[0], message: issue.message })) })
   }
 
   const { username, email, password } = userForm.data
@@ -31,12 +31,20 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
 
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      const prismaError = error as Prisma.PrismaClientKnownRequestError
+      const prismaError = error;
       if (prismaError.code === "P2002") {
-        return res.status(409).json({ message: "Email Already Registered" })
+
+        const meta = prismaError.meta as { driverAdapterError: { cause: { constraint: { fields: string[] } } } }
+
+        const fieldName = meta.driverAdapterError.cause.constraint.fields[0]
+
+        if (!fieldName) return next(error)
+
+        const capitalizeField = fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+
+        return res.status(409).json({ errors: [{ fieldName, message: `${capitalizeField} Already Registered` }] })
       }
     }
-
     next(error)
   }
 }

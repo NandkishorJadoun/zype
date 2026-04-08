@@ -1,5 +1,5 @@
 import { AuthPage } from "./pages/AuthPage";
-import { UserListPage } from "./pages/UserListPage";
+import { UserListPage } from "./pages/UsersListPage";
 
 export const routes = [
   {

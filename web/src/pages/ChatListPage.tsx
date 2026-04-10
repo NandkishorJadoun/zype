@@ -1,8 +1,10 @@
 import { Header } from "../components/Header";
 import { useLoaderData } from "react-router";
+import { ChatCard } from "../components/ChatCard";
+import type { Chat } from "../types";
 
 export const ChatListPage = () => {
-  const chats = useLoaderData();
+  const chats: Chat[] = useLoaderData();
 
   return (
     <>
@@ -11,7 +13,9 @@ export const ChatListPage = () => {
         <div className="text-lg">Chats</div>
         <div className="">{chats.length}</div>
       </div>
-      <div>{JSON.stringify(chats)}</div>
+      {chats.map((chat) => {
+        return <ChatCard key={chat.id} chat={chat} />;
+      })}
     </>
   );
 };

@@ -1,6 +1,8 @@
-import { useLoaderData, Navigate, useNavigate, Link } from "react-router";
+import { useLoaderData, Navigate, useNavigate } from "react-router";
 import type { User, Chat } from "../types";
 import { useState } from "react";
+import { ChatHeader } from "../components/ChatHeader";
+import { ChatForm } from "../components/ChatForm";
 
 export const UserPage = () => {
   const { user, chat }: { user: User; chat: Chat | null } = useLoaderData();
@@ -16,7 +18,6 @@ export const UserPage = () => {
   const token = localStorage.getItem("token");
 
   const { username, id } = user;
-  const profile = username[0].toUpperCase();
 
   const submitMessage = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -47,18 +48,7 @@ export const UserPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="border-b flex justify-center p-2 items-center relative">
-        <Link to={"/users"} className="absolute right-[90%]">
-          Back
-        </Link>
-        <div className="flex items-center gap-2">
-          <div className="border w-8 h-8 rounded-[50%] flex items-center justify-center">
-            {profile}
-          </div>
-          <p className="font-semibold">{username}</p>
-        </div>
-      </header>
-
+      <ChatHeader username={username} backUrl="/users" />
       <div className="flex-1 flex items-baseline-last p-2 overflow-x-auto">
         <div className="border p-1">
           <p>Send "Hello" to your new friend...</p>
@@ -70,18 +60,11 @@ export const UserPage = () => {
           </button>
         </div>
       </div>
-      <div className="border-t p-2">
-        <form className="flex gap-2" onSubmit={submitMessage}>
-          <textarea
-            className="border flex-1 p-2"
-            name="message"
-            placeholder="Write Your Message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button className="bg-black text-white font-bold p-3">Send</button>
-        </form>
-      </div>
+      <ChatForm
+        message={message}
+        setMessage={setMessage}
+        submitHandler={submitMessage}
+      />
     </div>
   );
 };

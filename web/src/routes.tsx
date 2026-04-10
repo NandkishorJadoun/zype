@@ -5,9 +5,13 @@ import { authMiddleware } from "./utils/authMiddleware";
 
 import { UserListPage } from "./pages/UserListPage";
 import { userListLoader } from "./loaders/UserList.loader";
+import { userLoader } from "./loaders/User.loader";
+import { UserPage } from "./pages/UserPage";
 
 import { chatListLoader } from "./loaders/ChatList.loader";
 import { ChatListPage } from "./pages/ChatListPage";
+import { chatLoader } from "./loaders/Chat.loader";
+import { ChatPage } from "./pages/ChatPage";
 
 export const routes = [
   {
@@ -23,13 +27,33 @@ export const routes = [
       },
       {
         path: "users",
-        Component: UserListPage,
-        loader: userListLoader,
+        children: [
+          {
+            index: true,
+            loader: userListLoader,
+            Component: UserListPage,
+          },
+        ],
       },
       {
         path: "chats",
-        Component: ChatListPage,
-        loader: chatListLoader,
+        children: [
+          {
+            index: true,
+            Component: ChatListPage,
+            loader: chatListLoader,
+          },
+          {
+            path: ":chatId",
+            Component: ChatPage,
+            loader: chatLoader,
+          },
+          {
+            path: "user/:userId",
+            Component: UserPage,
+            loader: userLoader,
+          },
+        ],
       },
     ],
   },

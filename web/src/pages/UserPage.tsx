@@ -11,7 +11,6 @@ export const UserPage = () => {
   const navigate = useNavigate();
 
   if (chat) {
-    console.log("RUN LOADER FIRST", chat);
     return <Navigate to={`/chats/${chat.id}`} />;
   }
 

@@ -6,6 +6,7 @@ import { passport } from "../libs/passport"
 import jwt from "jsonwebtoken";
 import { env } from "../schemas/env.schema";
 import { Prisma, type User } from "@prisma/client";
+import type { IVerifyOptions } from "passport-local";
 
 const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
   const { body } = req;
@@ -51,10 +52,12 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
 
 const postSignIn = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    passport.authenticate("local", { session: false }, (err: unknown, user: User, info: { message: string }) => {
+    passport.authenticate("local", { session: false }, (err: unknown, user: User, info: IVerifyOptions) => {
       if (err || !user) {
         const { message } = info;
-        return res.status(401).json({ message });
+        const fieldName = message.includes("Email") ? "email" : "password";
+
+        return res.status(401).json({ fieldName, message });
       }
 
       req.login(user, { session: false }, (err) => {

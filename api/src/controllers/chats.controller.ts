@@ -43,6 +43,12 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
 
 export const getChat = async (req: Request, res: Response, next: NextFunction) => {
 
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const userId = req.user.id
+
     const { chatId } = req.params;
 
     if (Array.isArray(chatId) || !chatId) {
@@ -56,11 +62,14 @@ export const getChat = async (req: Request, res: Response, next: NextFunction) =
             },
             include: {
                 messages: true,
-                users: true,
+                users: {
+                    where:
+                        { id: { not: userId } }
+                },
             }
         })
 
-        return res.status(200).json({ chat })
+        return res.status(200).json(chat)
 
     } catch (error) {
 
@@ -145,7 +154,8 @@ export const getUserChat = async (req: Request, res: Response, next: NextFunctio
     }
 
     try {
-        const chat = await prisma.chat.findFirst({
+
+        const chatQuery = prisma.chat.findFirst({
             where: {
                 AND: [
                     {
@@ -164,10 +174,21 @@ export const getUserChat = async (req: Request, res: Response, next: NextFunctio
                     }
                 ]
             }
-
         })
 
-        res.status(200).json(chat)
+        const userQuery = prisma.user.findUnique({
+            where: {
+                id: receiverId
+            },
+            select: {
+                id: true,
+                username: true,
+            }
+        })
+
+        const [user, chat] = await prisma.$transaction([userQuery, chatQuery])
+
+        res.status(200).json({ user, chat })
 
     } catch (error) {
         next(error)

@@ -55,7 +55,6 @@ const getUserProfile = async (req: Request, res: Response, next: NextFunction) =
             select: {
                 id: true,
                 username: true,
-                email: true,
             }
         })
 
@@ -63,7 +62,7 @@ const getUserProfile = async (req: Request, res: Response, next: NextFunction) =
             return res.status(404).json({ message: `User with ID "${userId}" not found` })
         }
 
-        return res.status(200).json({ user })
+        return res.status(200).json(user)
     } catch (error) {
         next(error)
     }
@@ -94,7 +93,7 @@ const patchUserProfile = async (req: Request, res: Response, next: NextFunction)
                 return res.status(409).json({ message: "Username is unavailable" })
             }
         }
-        
+
         next(error)
     }
 

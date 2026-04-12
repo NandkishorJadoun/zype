@@ -89,9 +89,9 @@ export const AuthPage = () => {
   };
 
   return (
-    <main className="min-h-screen flex justify-center items-center mx-3 dark:text-slate-100">
+    <main className="min-h-screen flex justify-center items-center mx-3">
       <div className=" p-3 min-w-full">
-        <div className="relative flex mb-3 border dark:border-slate-800 dark:bg-slate-900 rounded-4xl">
+        <div className="relative flex mb-3 border dark:border-slate-700 dark:bg-slate-800 rounded-4xl">
           <div
             className="absolute top-1 bottom-1 rounded-3xl w-[calc(50%-4px)] bg-blue-600 transition-transform duration-200"
             style={{
@@ -126,7 +126,7 @@ export const AuthPage = () => {
                   id="username"
                   required
                   placeholder="johndoe123"
-                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
+                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   maxLength={10}
                   minLength={3}
                   value={signUpFormData.username}
@@ -154,7 +154,7 @@ export const AuthPage = () => {
                   id="email"
                   required
                   placeholder="johndoe@example.com"
-                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
+                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signUpFormData.email}
                   onChange={(e) =>
                     setSignUpFormData({
@@ -181,7 +181,7 @@ export const AuthPage = () => {
                   minLength={8}
                   maxLength={20}
                   placeholder="••••••••"
-                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
+                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signUpFormData.password}
                   onChange={(e) =>
                     setSignUpFormData({
@@ -218,7 +218,7 @@ export const AuthPage = () => {
                   id="email"
                   required
                   placeholder="johndoe@example.com"
-                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
+                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signInFormData.email}
                   onChange={(e) => {
                     setSignInFormData({
@@ -244,7 +244,7 @@ export const AuthPage = () => {
                   minLength={8}
                   maxLength={20}
                   placeholder="••••••••"
-                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
+                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signInFormData.password}
                   onChange={(e) => {
                     setSignInFormData({

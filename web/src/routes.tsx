@@ -5,6 +5,10 @@ import { authMiddleware } from "./utils/authMiddleware";
 
 import { UserListPage } from "./pages/UserListPage";
 import { userListLoader } from "./loaders/UserList.loader";
+
+import { UserProfilePage } from "./pages/UserProfilePage";
+import { userProfileLoader } from "./loaders/UserProfile.loader";
+
 import { userLoader } from "./loaders/User.loader";
 import { UserPage } from "./pages/UserPage";
 
@@ -20,6 +24,7 @@ export const routes = [
   },
   {
     middleware: [authMiddleware],
+    HydrateFallback: () => <p>LOADING...</p>,
     children: [
       {
         index: true,
@@ -32,6 +37,11 @@ export const routes = [
             index: true,
             loader: userListLoader,
             Component: UserListPage,
+          },
+          {
+            path: ":userId",
+            loader: userProfileLoader,
+            Component: UserProfilePage,
           },
         ],
       },

@@ -12,7 +12,7 @@ export const FieldErrors = ({
   if (!Array.isArray(validationErrors)) {
     return (
       validationErrors.fieldName === fieldName && (
-        <p className="text-red-600">{validationErrors.message}</p>
+        <p className="text-red-500">{validationErrors.message}</p>
       )
     );
   }
@@ -26,7 +26,7 @@ export const FieldErrors = ({
   return (
     <ul>
       {fieldValidationErrors.map((validationError, index) => (
-        <li key={index} className="text-red-600">
+        <li key={index} className="text-red-500">
           {validationError.message}
         </li>
       ))}

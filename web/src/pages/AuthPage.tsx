@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FieldErrors } from "../components/FieldErrors";
 import { useNavigate } from "react-router";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02FreeIcons } from "@hugeicons/core-free-icons";
 
 export interface FormValidationError {
   fieldName: string;
@@ -31,13 +33,6 @@ export const AuthPage = () => {
 
   const navigate = useNavigate();
 
-  const generateBtnColor = (btnIndex: number) => {
-    return {
-      backgroundColor: activeTab === btnIndex ? "black" : "white",
-      color: activeTab === btnIndex ? "white" : "black",
-    };
-  };
-
   const submitSignUpForm = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
@@ -55,6 +50,9 @@ export const AuthPage = () => {
         setSignUpValidationError(errors);
         return;
       }
+
+      setSignUpFormData(signUpFormInitialData);
+      setSignUpValidationError(null);
 
       // if success then navigate user to /chats
     } catch (error) {
@@ -91,19 +89,23 @@ export const AuthPage = () => {
   };
 
   return (
-    <main className="min-h-screen flex justify-center items-center mx-3">
-      <div className="border p-3 min-w-full">
-        <div className="border flex mb-3">
+    <main className="min-h-screen flex justify-center items-center mx-3 dark:text-slate-100">
+      <div className=" p-3 min-w-full">
+        <div className="relative flex mb-3 border dark:border-slate-800 dark:bg-slate-900 rounded-4xl">
+          <div
+            className="absolute top-1 bottom-1 rounded-3xl w-[calc(50%-4px)] bg-blue-600 transition-transform duration-200"
+            style={{
+              transform: `translateX(${activeTab === 0 ? "4px" : "calc(100% + 4px)"})`,
+            }}
+          />
           <button
-            className="w-full py-2 font-semibold"
-            style={generateBtnColor(0)}
+            className="relative z-10 w-full py-3 font-semibold text-lg"
             onClick={() => setActiveTab(0)}
           >
             Sign Up
           </button>
           <button
-            className="w-full py-2 font-semibold"
-            style={generateBtnColor(1)}
+            className="relative z-10 w-full py-3 font-semibold text-lg"
             onClick={() => setActiveTab(1)}
           >
             Sign In
@@ -112,11 +114,11 @@ export const AuthPage = () => {
 
         {activeTab === 0 && (
           <>
-            <p className="text-center text-2xl mb-1.5">Create Account</p>
-            <form className="flex flex-col gap-4" onSubmit={submitSignUpForm}>
-              <div className="flex flex-col gap-1">
+            <p className="text-center text-2xl my-4">Create Account</p>
+            <form className="flex flex-col gap-5" onSubmit={submitSignUpForm}>
+              <div className="flex flex-col gap-2">
                 <label htmlFor="username">
-                  Username<span className="text-red-600">*</span>
+                  Username<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -124,7 +126,7 @@ export const AuthPage = () => {
                   id="username"
                   required
                   placeholder="johndoe123"
-                  className="border px-2 py-1"
+                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   maxLength={10}
                   minLength={3}
                   value={signUpFormData.username}
@@ -142,9 +144,9 @@ export const AuthPage = () => {
                 />
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <label htmlFor="email">
-                  Email Address<span className="text-red-600">*</span>
+                  Email Address<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -152,7 +154,7 @@ export const AuthPage = () => {
                   id="email"
                   required
                   placeholder="johndoe@example.com"
-                  className="border px-2 py-1"
+                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signUpFormData.email}
                   onChange={(e) =>
                     setSignUpFormData({
@@ -168,9 +170,9 @@ export const AuthPage = () => {
                 />
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <label htmlFor="password">
-                  Set A Password<span className="text-red-600">*</span>
+                  Set A Password<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="password"
@@ -178,8 +180,8 @@ export const AuthPage = () => {
                   required
                   minLength={8}
                   maxLength={20}
-                  placeholder="abcd1234"
-                  className="border px-2 py-1"
+                  placeholder="••••••••"
+                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signUpFormData.password}
                   onChange={(e) =>
                     setSignUpFormData({
@@ -195,8 +197,8 @@ export const AuthPage = () => {
                 />
               </div>
 
-              <button className="font-bold bg-black text-xl text-white py-2">
-                Get Started
+              <button className="font-bold bg-blue-600 text-xl py-2 rounded-xl flex items-center justify-center gap-1">
+                Get Started <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
               </button>
             </form>
           </>
@@ -204,11 +206,11 @@ export const AuthPage = () => {
 
         {activeTab === 1 && (
           <>
-            <p className="text-center text-2xl mb-1.5">Welcome Back!</p>
-            <form className="flex flex-col gap-4" onSubmit={submitSignInForm}>
-              <div className="flex flex-col gap-1">
+            <p className="text-center text-2xl my-4">Welcome Back!</p>
+            <form className="flex flex-col gap-5" onSubmit={submitSignInForm}>
+              <div className="flex flex-col gap-2">
                 <label htmlFor="email">
-                  Email Address<span className="text-red-600">*</span>
+                  Email Address<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -216,7 +218,7 @@ export const AuthPage = () => {
                   id="email"
                   required
                   placeholder="johndoe@example.com"
-                  className="border px-2 py-1"
+                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signInFormData.email}
                   onChange={(e) => {
                     setSignInFormData({
@@ -225,16 +227,15 @@ export const AuthPage = () => {
                     });
                   }}
                 />
-
                 <FieldErrors
                   fieldName="email"
                   validationErrors={signInValidationError}
                 />
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <label htmlFor="password">
-                  Set A Password<span className="text-red-600">*</span>
+                  Enter Password<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="password"
@@ -242,8 +243,8 @@ export const AuthPage = () => {
                   required
                   minLength={8}
                   maxLength={20}
-                  placeholder="abcd1234"
-                  className="border px-2 py-1"
+                  placeholder="••••••••"
+                  className="border dark:border-slate-800 dark:bg-slate-900  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
                   value={signInFormData.password}
                   onChange={(e) => {
                     setSignInFormData({
@@ -252,15 +253,14 @@ export const AuthPage = () => {
                     });
                   }}
                 />
-
                 <FieldErrors
                   fieldName="password"
                   validationErrors={signInValidationError}
                 />
               </div>
 
-              <button className="font-bold bg-black text-xl text-white py-2">
-                Sign In
+              <button className="font-bold bg-blue-600 text-xl py-2 rounded-xl flex items-center justify-center gap-1">
+                Sign In <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
               </button>
             </form>
           </>

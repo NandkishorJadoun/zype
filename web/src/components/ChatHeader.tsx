@@ -1,25 +1,26 @@
 import { Link } from "react-router";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft02Icon, User02FreeIcons } from "@hugeicons/core-free-icons";
+import type { User } from "../types";
 
 export const ChatHeader = ({
-  username,
+  user,
   backUrl,
 }: {
-  username: string;
+  user: User;
   backUrl: string;
 }) => {
-  const profile = username[0].toUpperCase();
-
   return (
-    <header className="border-b flex justify-center p-2 items-center relative">
-      <Link to={backUrl} className="absolute right-[90%]">
-        Back
+    <header className="flex justify-center items-center border-b px-3 dark:border-b-slate-700 fixed top-0 left-0 right-0 backdrop-blur-xs dark:bg-slate-950/80 z-10 h-16">
+      <Link to={backUrl} className="absolute right-[90%] flex gap-1">
+        <HugeiconsIcon icon={ArrowLeft02Icon} color="white" strokeWidth={2.5} />
       </Link>
-      <div className="flex items-center gap-2">
-        <div className="border w-8 h-8 rounded-[50%] flex items-center justify-center">
-          {profile}
+      <Link to={`/users/${user.id}`} className="flex items-center gap-2">
+        <div className="border dark:border-slate-700 w-9 h-9 rounded-full flex dark:bg-slate-900 items-center justify-center">
+          <HugeiconsIcon icon={User02FreeIcons} />
         </div>
-        <p className="font-semibold">{username}</p>
-      </div>
+        <p className="font-semibold">{user.username}</p>
+      </Link>
     </header>
   );
 };

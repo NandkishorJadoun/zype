@@ -18,7 +18,7 @@ export const ChatListPage = () => {
         })}
       </main>
       <Link
-        className="bg-blue-600 fixed bottom-10 right-5 flex gap-1 py-2 px-3 font-semibold rounded-full"
+        className="bg-blue-600 fixed bottom-10 right-5 flex gap-1 py-2 px-3 font-semibold rounded-full shadow-lg shadow-blue-900/40 active:scale-[0.95] transition-all duration-200"
         to={"/users"}
       >
         <HugeiconsIcon

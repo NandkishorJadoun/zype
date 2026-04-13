@@ -35,6 +35,7 @@ export const ChatPage = () => {
       const newMessage = await res.json();
 
       setMessages((prev) => [...prev, newMessage]);
+      setMessage("");
     } catch (error) {
       console.error(error);
     }
@@ -42,28 +43,50 @@ export const ChatPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <ChatHeader username={username} backUrl="/chats" />
+      <ChatHeader user={{ username, id }} backUrl="/chats" />
+      <main className="p-2 py-20 flex-1 flex flex-col-reverse gap-1.5  overflow-y-auto">
+        {[...messages].reverse().map((msg) => {
+          const options = {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          } as const;
 
-      <div className="flex-1 flex flex-col gap-1 p-2 overflow-y-auto">
-        {messages.map((msg) => {
+          const time = new Date(msg.created_at).toLocaleTimeString(
+            "en-US",
+            options,
+          );
+
+          const senderStyles = "self-end bg-blue-600 rounded-bl-xl";
+
+          const receiverStyles =
+            "self-start bg-slate-800 border border-slate-700 rounded-br-xl";
+
           return (
             <div
               key={msg.id}
-              className={`border p-2 ${msg.userId === id ? "self-start bg-zinc-400" : "self-end"}`}
+              className={`${msg.userId === id ? "self-start" : "self-end"}`}
             >
-              <p>{msg.data}</p>
-              <p>{msg.created_at.toLocaleString()}</p>
+              <p
+                className={`rounded-tl-xl rounded-tr-xl p-2 break-all ${msg.userId === id ? receiverStyles : senderStyles}`}
+              >
+                {msg.data}
+              </p>
+              <p
+                className={`opacity-75 text-sm mt-0.5 ${msg.userId === id ? "text-start" : "text-end"}`}
+              >
+                {time}
+              </p>
             </div>
           );
         })}
-      </div>
+      </main>
 
       <ChatForm
         message={message}
         setMessage={setMessage}
         submitHandler={submitMessage}
       />
-      
     </div>
   );
 };

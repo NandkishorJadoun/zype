@@ -23,3 +23,8 @@ export interface Chat {
 export interface UserResponse {
     users: User[]
 }
+
+export interface FormValidationError {
+    fieldName: string;
+    message: string;
+}

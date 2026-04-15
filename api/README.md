@@ -1,25 +1,27 @@
 ### TODO
 
-- [x] add all necessary packages
-- [x] design db
-- [x] create and run server
-- [x] plan all routes
+- [ ] Test GET /user/:userId
+- [ ] POST /user/:userId
+- [ ] add validation to post routes
+- [ ] keep helper functions in their own files for tests.
+- [ ] on /signup route, check for username field if username already registered or not.
 - [ ] add more todos
-
 
 ### Routes
 
-- [ ] /auth
-    - [ ] POST /signin
-    - [ ] POST /signup
-    - [ ] POST /logout
+- [x] /auth
+  - [x] POST /signin
+  - [x] POST /signup
 
 - [ ] /chats
-    - [ ] GET / show all users whom the user chatted till now
-    - [ ] GET /chats/user/{userId} will show all the messages till now or will return [check what it will return]
-    - [ ] POST /chats/user/{userId} will create new chat if the chat don't exist or add a new message to the chat
+  - [x] GET / show all chats till now
+  - [x] GET /:chatId will show all the messages till now
+  - [x] POST /:chatId will add a new message to the chat
+  - [x] DELETE /:chatId will delete the chat
+  - [x] GET /user/:userId will check if chat already exist if yes then redirect user to the chat id or null
+  - [x] POST /user/:userId will create a new chat and return the chatId
 
-- [ ] /users
-    - [ ] GET / show all users who exist on the platform but user haven't messaged yet
-    - [ ] GET /{userId} show the profile of the user
-    - [ ] PATCH /{userId} to update the profile of the user
+- [x] /users
+  - [x] GET / show all users who exist on the platform but user haven't messaged yet
+  - [x] GET /:userId show the profile of the user
+  - [x] PATCH /me to update the profile of the user

@@ -1,41 +1,34 @@
 import { useState } from "react";
 import { FieldErrors } from "../components/FieldErrors";
-import { useNavigate } from "react-router";
+import { useNavigate, Navigate } from "react-router";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight02FreeIcons } from "@hugeicons/core-free-icons";
-
-export interface FormValidationError {
-  fieldName: string;
-  message: string;
-}
-
-const signUpFormInitialData = {
-  username: "",
-  email: "",
-  password: "",
-};
-
-const signInFormInitialData = {
-  email: "",
-  password: "",
-};
+import { signUpFormInitData, signInFormInitData } from "../utils/authUtils";
+import type { FormValidationError } from "../types";
+import { EmailFormField } from "../components/EmailFormField";
+import { PasswordFormField } from "../components/PasswordFormField";
 
 export const AuthPage = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [signUpFormData, setSignUpFormData] = useState(signUpFormInitialData);
+  const [signUpFormData, setSignUpFormData] = useState(signUpFormInitData);
   const [signUpValidationError, setSignUpValidationError] = useState<
     null | FormValidationError[]
   >(null);
 
-  const [signInFormData, setSignInFormData] = useState(signInFormInitialData);
+  const [signInFormData, setSignInFormData] = useState(signInFormInitData);
   const [signInValidationError, setSignInValidationError] =
     useState<null | FormValidationError>(null);
 
   const navigate = useNavigate();
 
+  // check if user is already signed in
+
+  const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  if (token && user) return <Navigate to={"/chats"} />;
+
   const submitSignUpForm = async (e: React.SubmitEvent) => {
     e.preventDefault();
-
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
         method: "POST",
@@ -51,9 +44,7 @@ export const AuthPage = () => {
         return;
       }
 
-      // reset the form and navigate to /chats
-
-      setSignUpFormData(signUpFormInitialData);
+      setSignUpFormData(signUpFormInitData);
       setSignUpValidationError(null);
 
       const { token, user } = await res.json();
@@ -84,7 +75,7 @@ export const AuthPage = () => {
         return;
       }
 
-      setSignInFormData(signInFormInitialData);
+      setSignInFormData(signInFormInitData);
       setSignInValidationError(null);
 
       const { token, user } = await res.json();
@@ -155,25 +146,10 @@ export const AuthPage = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="email">
-                  Email Address<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  required
-                  placeholder="johndoe@example.com"
-                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
-                  value={signUpFormData.email}
-                  onChange={(e) =>
-                    setSignUpFormData({
-                      ...signUpFormData,
-                      email: e.target.value,
-                    })
-                  }
+                <EmailFormField
+                  formData={signUpFormData}
+                  setFormData={setSignUpFormData}
                 />
-
                 <FieldErrors
                   fieldName={"email"}
                   validationErrors={signUpValidationError}
@@ -181,26 +157,11 @@ export const AuthPage = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="password">
-                  Set A Password<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  required
-                  minLength={8}
-                  maxLength={20}
-                  placeholder="••••••••"
-                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
-                  value={signUpFormData.password}
-                  onChange={(e) =>
-                    setSignUpFormData({
-                      ...signUpFormData,
-                      password: e.target.value,
-                    })
-                  }
+                <PasswordFormField
+                  label="Set A Password"
+                  formData={signUpFormData}
+                  setFormData={setSignUpFormData}
                 />
-
                 <FieldErrors
                   fieldName={"password"}
                   validationErrors={signUpValidationError}
@@ -220,23 +181,9 @@ export const AuthPage = () => {
             <p className="text-center text-2xl my-4">Welcome Back!</p>
             <form className="flex flex-col gap-5" onSubmit={submitSignInForm}>
               <div className="flex flex-col gap-2">
-                <label htmlFor="email">
-                  Email Address<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  required
-                  placeholder="johndoe@example.com"
-                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
-                  value={signInFormData.email}
-                  onChange={(e) => {
-                    setSignInFormData({
-                      ...signInFormData,
-                      email: e.target.value,
-                    });
-                  }}
+                <EmailFormField
+                  formData={signInFormData}
+                  setFormData={setSignInFormData}
                 />
                 <FieldErrors
                   fieldName="email"
@@ -245,24 +192,10 @@ export const AuthPage = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="password">
-                  Enter Password<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  required
-                  minLength={8}
-                  maxLength={20}
-                  placeholder="••••••••"
-                  className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
-                  value={signInFormData.password}
-                  onChange={(e) => {
-                    setSignInFormData({
-                      ...signInFormData,
-                      password: e.target.value,
-                    });
-                  }}
+                <PasswordFormField
+                  label="Enter Password"
+                  formData={signInFormData}
+                  setFormData={setSignInFormData}
                 />
                 <FieldErrors
                   fieldName="password"

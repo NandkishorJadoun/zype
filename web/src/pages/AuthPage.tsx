@@ -51,10 +51,17 @@ export const AuthPage = () => {
         return;
       }
 
+      // reset the form and navigate to /chats
+
       setSignUpFormData(signUpFormInitialData);
       setSignUpValidationError(null);
 
-      // if success then navigate user to /chats
+      const { token, user } = await res.json();
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      return navigate("/chats", { replace: true });
     } catch (error) {
       console.error(error);
     }
@@ -76,6 +83,9 @@ export const AuthPage = () => {
         setSignInValidationError(error);
         return;
       }
+
+      setSignInFormData(signInFormInitialData);
+      setSignInValidationError(null);
 
       const { token, user } = await res.json();
 
@@ -198,7 +208,8 @@ export const AuthPage = () => {
               </div>
 
               <button className="font-bold bg-blue-600 text-xl py-2 rounded-xl flex items-center justify-center gap-1">
-                Get Started <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
+                Get Started{" "}
+                <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
               </button>
             </form>
           </>
@@ -260,7 +271,8 @@ export const AuthPage = () => {
               </div>
 
               <button className="font-bold bg-blue-600 text-xl py-2 rounded-xl flex items-center justify-center gap-1">
-                Sign In <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
+                Sign In{" "}
+                <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
               </button>
             </form>
           </>

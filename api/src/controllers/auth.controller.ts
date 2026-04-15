@@ -20,7 +20,7 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         email,
@@ -28,7 +28,9 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
       }
     })
 
-    return res.status(201).json({ message: "User registered successfully" })
+    const { id } = user;
+    const token = jwt.sign({ id }, env.JWT_SECRET_KEY);
+    return res.json({ user: { id, username, email }, token });
 
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

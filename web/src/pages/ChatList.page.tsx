@@ -5,7 +5,7 @@ import type { Chat } from "../types";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ChatAdd01FreeIcons } from "@hugeicons/core-free-icons";
 
-export const ChatListPage = () => {
+const ChatListPage = () => {
   const chats: Chat[] = useLoaderData();
 
   return (
@@ -31,3 +31,5 @@ export const ChatListPage = () => {
     </div>
   );
 };
+
+export default ChatListPage;

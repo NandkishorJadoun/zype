@@ -6,7 +6,7 @@ import { ChatForm } from "../components/ChatForm";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LoveKoreanFingerIcon } from "@hugeicons/core-free-icons";
 
-export const UserPage = () => {
+const UserPage = () => {
   const { user, chat }: { user: User; chat: Chat | null } = useLoaderData();
   const [message, setMessage] = useState("");
 
@@ -79,3 +79,5 @@ export const UserPage = () => {
     </div>
   );
 };
+
+export default UserPage;

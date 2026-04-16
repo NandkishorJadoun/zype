@@ -1,4 +1,4 @@
-import type { FormValidationError } from "../pages/AuthPage";
+import type { FormValidationError } from "../types";
 
 export const FieldErrors = ({
   fieldName,

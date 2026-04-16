@@ -1,31 +1,29 @@
+import { lazy } from "react";
 import { Navigate } from "react-router";
 
-import { AuthPage } from "./pages/AuthPage";
+const AuthPage = lazy(() => import("./pages/Auth.page"));
+const UserListPage = lazy(() => import("./pages/UserList.page"));
+const UserProfilePage = lazy(() => import("./pages/UserProfile.page"));
+const UserPage = lazy(() => import("./pages/User.page"));
+const ChatListPage = lazy(() => import("./pages/ChatList.page"));
+const ChatPage = lazy(() => import("./pages/Chat.page"));
+
 import { authMiddleware } from "./utils/authMiddleware";
-
-import { UserListPage } from "./pages/UserListPage";
-import { userListLoader } from "./loaders/UserList.loader";
-
-import { UserProfilePage } from "./pages/UserProfilePage";
-import { userProfileLoader } from "./loaders/UserProfile.loader";
-
-import { userLoader } from "./loaders/User.loader";
-import { UserPage } from "./pages/UserPage";
-
-import { chatListLoader } from "./loaders/ChatList.loader";
-import { ChatListPage } from "./pages/ChatListPage";
-import { chatLoader } from "./loaders/Chat.loader";
-import { ChatPage } from "./pages/ChatPage";
 import { deleteChatAction } from "./utils/deleteChatAction";
 
-export const routes = [
+import { userListLoader } from "./loaders/UserList.loader";
+import { userProfileLoader } from "./loaders/UserProfile.loader";
+import { userLoader } from "./loaders/User.loader";
+import { chatListLoader } from "./loaders/ChatList.loader";
+import { chatLoader } from "./loaders/Chat.loader";
+
+const routes = [
   {
     path: "/auth",
     Component: AuthPage,
   },
   {
     middleware: [authMiddleware],
-    HydrateFallback: () => <p>LOADING...</p>,
     children: [
       {
         index: true,
@@ -70,3 +68,5 @@ export const routes = [
     ],
   },
 ];
+
+export default routes;

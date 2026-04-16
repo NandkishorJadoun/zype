@@ -1,7 +1,7 @@
 import { useLoaderData, Link, useNavigate } from "react-router";
 import type { User } from "../types";
 
-export const UserProfilePage = () => {
+const UserProfilePage = () => {
   const navigate = useNavigate();
   const user: User = useLoaderData();
 
@@ -25,3 +25,5 @@ export const UserProfilePage = () => {
     </>
   );
 };
+
+export default UserProfilePage;

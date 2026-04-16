@@ -8,7 +8,7 @@ import type { FormValidationError } from "../types";
 import { EmailFormField } from "../components/EmailFormField";
 import { PasswordFormField } from "../components/PasswordFormField";
 
-export const AuthPage = () => {
+const AuthPage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [signUpFormData, setSignUpFormData] = useState(signUpFormInitData);
   const [signUpValidationError, setSignUpValidationError] = useState<
@@ -214,3 +214,5 @@ export const AuthPage = () => {
     </main>
   );
 };
+
+export default AuthPage;

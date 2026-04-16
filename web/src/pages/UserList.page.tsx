@@ -5,7 +5,7 @@ import type { User } from "../types";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ChatIcon } from "@hugeicons/core-free-icons";
 
-export const UserListPage = () => {
+function UserListPage() {
   const users: User[] = useLoaderData();
 
   return (
@@ -25,4 +25,6 @@ export const UserListPage = () => {
       </Link>
     </div>
   );
-};
+}
+
+export default UserListPage;

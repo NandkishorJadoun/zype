@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ChatHeader } from "../components/ChatHeader";
 import { ChatForm } from "../components/ChatForm";
 
-export const ChatPage = () => {
+const ChatPage = () => {
   const chat: Chat = useLoaderData();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>(chat.messages);
@@ -90,3 +90,5 @@ export const ChatPage = () => {
     </div>
   );
 };
+
+export default ChatPage;

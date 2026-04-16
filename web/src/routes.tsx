@@ -16,6 +16,7 @@ import { chatListLoader } from "./loaders/ChatList.loader";
 import { ChatListPage } from "./pages/ChatListPage";
 import { chatLoader } from "./loaders/Chat.loader";
 import { ChatPage } from "./pages/ChatPage";
+import { deleteChatAction } from "./utils/deleteChatAction";
 
 export const routes = [
   {
@@ -52,6 +53,7 @@ export const routes = [
             index: true,
             Component: ChatListPage,
             loader: chatListLoader,
+            action: deleteChatAction,
           },
           {
             path: ":chatId",

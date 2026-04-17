@@ -115,15 +115,21 @@ export const deleteChat = async (req: Request, res: Response, next: NextFunction
         return res.status(400).json({ message: "Invalid Chat ID" })
     }
 
+    const deleteMessages = prisma.message.deleteMany({
+        where: {
+            chatId
+        }
+    })
+
+    const deleteChat = prisma.chat.delete({
+        where: {
+            id: chatId
+        }
+    })
+
     try {
-        await prisma.chat.delete({
-            where: {
-                id: chatId
-            }
-        })
-
+        await prisma.$transaction([deleteMessages, deleteChat])
         return res.status(204).send()
-
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             const prismaError = error as Prisma.PrismaClientKnownRequestError

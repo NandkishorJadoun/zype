@@ -3,6 +3,8 @@ import express, { json, urlencoded, type Express, type Request, type Response, t
 import { authRouter } from "./routes/auth.router";
 import { usersRouter } from "./routes/users.router";
 import { chatsRouter } from "./routes/chats.router";
+import { UploadValidationError } from "./utils/UploadValidationError";
+import multer from "multer";
 export const app: Express = express()
 
 app.use(cors())
@@ -16,5 +18,10 @@ app.use("/chats", chatsRouter)
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     console.error("[Error Handler]", err)
+    if (err instanceof multer.MulterError || err instanceof UploadValidationError) {
+        const { field, message } = err
+        const status = err instanceof UploadValidationError ? 415 : 400
+        return res.status(status).json({ fieldName: field, message })
+    }
     res.status(500).json({ message: "Internal Server Error" })
 })

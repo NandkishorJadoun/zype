@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "about" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "avatar" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "fullname" TEXT NOT NULL DEFAULT '';

@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../libs/prisma";
 import { Prisma } from "@prisma/client";
+import { uploadOnCloudinary } from "../utils/cloudinary";
+import { PatchFormData } from "../schemas/auth.schema";
+import { ZodError } from "zod";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -69,34 +72,41 @@ const getUserProfile = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const patchUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+    const { file, body, user } = req
 
-    if (!req.user) {
+    if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { id } = req.user;
-    const { username } = req.body;
+    const { id } = user
+    let avatar = null;
 
     try {
-        const user = await prisma.user.update({
-            where: { id },
-            data: { username },
-            select: { id: true, username: true, email: true }
-        })
-
-        return res.status(200).json({ user })
-
-    } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            const prismaError = error as Prisma.PrismaClientKnownRequestError
-            if (prismaError.code === "P2002") {
-                return res.status(409).json({ message: "Username is unavailable" })
-            }
+        if (file) {
+            avatar = (await uploadOnCloudinary(file)).secure_url
         }
 
+        const userForm = PatchFormData.parse(body)
+
+        const user = await prisma.user.update({
+            where: { id },
+            data: { avatar, ...userForm },
+            select: { id: true, username: true, avatar: true, about: true }
+        })
+
+        return res.json(user)
+
+    } catch (error) {
+        if (error instanceof ZodError) {
+            return res.status(422).json({ errors: error.issues.map(issue => Object({ fieldName: issue.path[0], message: issue.message })) })
+        }
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2002") {
+                return res.status(409).json({ errors: { fieldName: "username", message: "Username is unavailable" } })
+            }
+        }
         next(error)
     }
-
 }
 
 export { getUsers, getUserProfile, patchUserProfile }

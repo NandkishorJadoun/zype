@@ -9,15 +9,11 @@ cloudinary.config({
 })
 
 export const uploadOnCloudinary = async (file: Express.Multer.File) => {
-    try {
-        const b64 = file.buffer.toString("base64");
-        const dataURI = `data:${file.mimetype};base64,${b64}`;
-        const res = await cloudinary.uploader.upload(dataURI, {
-            folder: "zype",
-            resource_type: "image"
-        })
-        return res
-    } catch (error) {
-        console.error(error)
-    }
+    const b64 = file.buffer.toString("base64");
+    const dataURI = `data:${file.mimetype};base64,${b64}`;
+    const res = await cloudinary.uploader.upload(dataURI, {
+        folder: "zype",
+        resource_type: "image"
+    })
+    return res
 }

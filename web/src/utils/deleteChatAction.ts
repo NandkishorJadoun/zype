@@ -1,9 +1,14 @@
 import { userContext } from "./userContext";
+import { redirect, type ActionFunction } from "react-router";
 
-export async function deleteChatAction({ request, context }) {
+export const deleteChatAction: ActionFunction = async ({ request, context }) => {
     const formData = await request.formData();
     const id = formData.get("id");
-    const { token } = context.get(userContext);
+    const token = context.get(userContext)?.token
+
+    if (!token) {
+        throw redirect("/auth")
+    }
 
     const url = `${import.meta.env.VITE_API_URL}/chats/${id}`
 

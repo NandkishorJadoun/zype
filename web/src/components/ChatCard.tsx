@@ -7,17 +7,16 @@ import { useRef } from "react";
 export const ChatCard = ({ chat }: { chat: Chat }) => {
   const { id } = chat;
   const user = chat.users[0];
-  const dialogRef = useRef(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const fetcher = useFetcher();
 
-  const openDialog = () => dialogRef.current.showModal();
-  const closeDialog = () => dialogRef.current.close();
+  const openDialog = () => dialogRef.current?.showModal();
+  const closeDialog = () => dialogRef.current?.close();
 
   const isDeleting = fetcher.formData?.get("id") === String(id);
   if (isDeleting) return null;
 
   // TODO: add latest message in response
-
   const message = undefined;
 
   return (
@@ -29,7 +28,7 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
         <HugeiconsIcon icon={User02FreeIcons} />
       </Link>
       <div className="flex-1 flex justify-between items-center">
-        <Link to={`/chats/${id}`}>
+        <Link className="flex-1" to={`/chats/${id}`}>
           <p className="font-semibold">{user.username}</p>
           <p className="opacity-75">{message ?? "Some Message"}</p>
         </Link>
@@ -77,43 +76,41 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
               >
                 Delete
               </button>
-
-              <dialog
-                ref={dialogRef}
-                className="fixed inset-0 m-auto rounded-lg shadow-2xl backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm dark:bg-slate-900 dark:text-slate-100 border dark:border-slate-700 "
-              >
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-4">
-                    Are you sure you want to delete this chat?
-                  </h3>
-
-                  <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
-                    This will delete this chat permanently. You cannot undo this
-                    action.
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row-reverse gap-3">
-                    <button
-                      className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 font-semibold rounded-xl transition-colors active:scale-95"
-                      onClick={() => {
-                        fetcher.submit({ id }, { method: "delete" });
-                      }}
-                    >
-                      Delete Chat
-                    </button>
-                    <button
-                      onClick={closeDialog}
-                      className="flex-1 px-4 py-2.5 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-100 font-semibold rounded-xl transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </dialog>
             </div>
           </div>
         </div>
       </div>
+      <dialog
+        ref={dialogRef}
+        className="fixed inset-0 m-auto rounded-lg shadow-2xl backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm dark:bg-slate-900 dark:text-slate-100 border dark:border-slate-700 "
+      >
+        <div className="p-6">
+          <h3 className="text-xl font-bold mb-4">
+            Are you sure you want to delete this chat?
+          </h3>
+
+          <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+            This will delete this chat permanently. You cannot undo this action.
+          </p>
+
+          <div className="flex flex-col sm:flex-row-reverse gap-3">
+            <button
+              className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 font-semibold rounded-xl transition-colors active:scale-95"
+              onClick={() => {
+                fetcher.submit({ id }, { method: "delete" });
+              }}
+            >
+              Delete Chat
+            </button>
+            <button
+              onClick={closeDialog}
+              className="flex-1 px-4 py-2.5 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-100 font-semibold rounded-xl transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

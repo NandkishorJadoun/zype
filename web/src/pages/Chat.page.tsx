@@ -42,7 +42,7 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen dark:bg-slate-900/90 border-x dark:border-slate-800">
       <ChatHeader user={{ username, id }} backUrl="/chats" />
       <main className="p-2 py-20 flex-1 flex flex-col-reverse gap-1.5  overflow-y-auto">
         {[...messages].reverse().map((msg) => {

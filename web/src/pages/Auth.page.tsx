@@ -90,8 +90,8 @@ const AuthPage = () => {
   };
 
   return (
-    <main className="min-h-screen flex justify-center items-center mx-3">
-      <div className=" p-3 min-w-full">
+    <main className="min-h-screen flex justify-center items-center max-w-3xl mx-auto border-x dark:border-slate-800 dark:bg-slate-900/90">
+      <div className=" px-4 w-full ">
         <div className="relative flex mb-3 border dark:border-slate-700 dark:bg-slate-800 rounded-4xl">
           <div
             className="absolute top-1 bottom-1 rounded-3xl w-[calc(50%-4px)] bg-blue-600 transition-transform duration-200"
@@ -168,7 +168,7 @@ const AuthPage = () => {
                 />
               </div>
 
-              <button className="font-bold bg-blue-600 text-xl py-2 rounded-xl flex items-center justify-center gap-1">
+              <button className="font-bold bg-blue-600 text-xl py-3 rounded-xl flex items-center justify-center gap-1">
                 Get Started{" "}
                 <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
               </button>
@@ -203,7 +203,7 @@ const AuthPage = () => {
                 />
               </div>
 
-              <button className="font-bold bg-blue-600 text-xl py-2 rounded-xl flex items-center justify-center gap-1">
+              <button className="font-bold bg-blue-600 text-xl py-3 rounded-xl flex items-center justify-center gap-1">
                 Sign In{" "}
                 <HugeiconsIcon icon={ArrowRight02FreeIcons} strokeWidth={2.5} />
               </button>

@@ -9,16 +9,16 @@ const ChatListPage = () => {
   const chats: Chat[] = useLoaderData();
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col min-h-screen border-x dark:border-slate-800 dark:bg-slate-900">
       <Header />
-      <main className="p-3 mt-16">
+      <main className="p-3 mt-16 flex-1">
         <div className="font-semibold opacity-75">CHATS</div>
         {chats.map((chat) => {
           return <ChatCard key={chat.id} chat={chat} />;
         })}
       </main>
       <Link
-        className="bg-blue-600 fixed bottom-10 right-5 flex gap-1 py-2 px-3 font-semibold rounded-full shadow-lg shadow-blue-900/40 active:scale-[0.95] transition-all duration-200"
+        className="bg-blue-600 absolute bottom-10 right-5 flex gap-1 py-2 px-3 font-semibold rounded-full shadow-lg shadow-blue-900/40 active:scale-[0.95] transition-all duration-200"
         to={"/users"}
       >
         <HugeiconsIcon

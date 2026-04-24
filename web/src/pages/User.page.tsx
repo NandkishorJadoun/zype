@@ -48,10 +48,10 @@ const UserPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen dark:bg-slate-900/90 border-x dark:border-slate-800">
       <ChatHeader user={{ username, id }} backUrl="/users" />
       <main className="flex-1 flex items-center justify-center p-4">
-        <div className="max-w-sm w-full p-6 text-center bg-slate-800/50 border border-slate-700 rounded-2xl backdrop-blur-sm shadow-xl">
+        <div className="max-w-sm w-full p-6 text-center bg-slate-800/50 border dark:border-slate-700 rounded-2xl backdrop-blur-sm shadow-xl">
           <HugeiconsIcon
             icon={LoveKoreanFingerIcon}
             strokeWidth={1.5}

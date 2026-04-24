@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { lazy } from "react";
 import { Navigate } from "react-router";
 
@@ -10,7 +11,6 @@ const ChatPage = lazy(() => import("./pages/Chat.page"));
 
 import { authMiddleware } from "./utils/authMiddleware";
 import { deleteChatAction } from "./utils/deleteChatAction";
-
 import { userListLoader } from "./loaders/UserList.loader";
 import { userProfileLoader } from "./loaders/UserProfile.loader";
 import { userLoader } from "./loaders/User.loader";

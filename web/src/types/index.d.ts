@@ -1,8 +1,8 @@
 export interface User {
     id: string,
     username: string,
-    email?: string,
-    about?: string
+    about?: string,
+    avatar?: string
 }
 
 export interface Message {
@@ -16,8 +16,8 @@ export interface Message {
 export interface Chat {
     id: string;
     created_at: Date;
-    users?: User[];
-    messages?: Message[]
+    users: User[];
+    messages: Message[]
 }
 
 export interface UserResponse {

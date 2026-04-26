@@ -1,56 +1,23 @@
-import { useLoaderData, Navigate, useNavigate } from "react-router";
+import { useLoaderData, Navigate, Form } from "react-router";
 import type { User, Chat } from "../types";
-import { useState } from "react";
 import { ChatHeader } from "../components/ChatHeader";
-import { ChatForm } from "../components/ChatForm";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { LoveKoreanFingerIcon } from "@hugeicons/core-free-icons";
+import { LoveKoreanFingerIcon, SentIcon } from "@hugeicons/core-free-icons";
 
 const UserPage = () => {
   const { user, chat }: { user: User; chat: Chat | null } = useLoaderData();
-  const [message, setMessage] = useState("");
-
-  const navigate = useNavigate();
 
   if (chat) {
     return <Navigate to={`/chats/${chat.id}`} />;
   }
 
-  const token = localStorage.getItem("token");
-
   const { username, id } = user;
 
-  const submitMessage = async (e: React.SubmitEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/chats/user/${id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ message }),
-        },
-      );
-
-      if (!res.status) {
-        throw new Error("Some Server Error...");
-      }
-
-      const chat: Chat = await res.json();
-
-      return navigate(`/chats/${chat.id}`);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
-    <div className="flex flex-col h-screen dark:bg-slate-900/90 border-x dark:border-slate-800">
+    <div className="flex-1 flex flex-col dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl">
       <ChatHeader user={{ username, id }} backUrl="/users" />
-      <main className="flex-1 flex items-center justify-center p-4">
+      <main className="p-2 flex-1 flex items-center justify-center gap-1.5 overflow-y-auto">
         <div className="max-w-sm w-full p-6 text-center bg-slate-800/50 border dark:border-slate-700 rounded-2xl backdrop-blur-sm shadow-xl">
           <HugeiconsIcon
             icon={LoveKoreanFingerIcon}
@@ -64,18 +31,29 @@ const UserPage = () => {
           </p>
 
           <button
-            onClick={() => setMessage("Hello")}
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-900/20"
           >
             Say Hello
           </button>
         </div>
       </main>
-      <ChatForm
-        message={message}
-        setMessage={setMessage}
-        submitHandler={submitMessage}
-      />
+     <Form
+        method="POST"
+        className=" border p-1 mx-3 mb-2 dark:border-slate-700 dark:bg-slate-950/15 backdrop-blur-xs flex gap-1 rounded-4xl h-16 items-center"
+      >
+        <textarea
+          rows={1}
+          className="focus:outline-0 focus:outline-blue-600 px-3 py-3 flex-1 resize-none rounded-4xl"
+          name="message"
+          placeholder="Write Your Message..."
+        />
+        <button
+          type="submit"
+          className="bg-blue-600 font-bold p-3.5 rounded-full active:scale-[0.95] transition-all duration-200 shadow-lg shadow-blue-900/20"
+        >
+          <HugeiconsIcon icon={SentIcon} strokeWidth={2.5} />
+        </button>
+      </Form>
     </div>
   );
 };

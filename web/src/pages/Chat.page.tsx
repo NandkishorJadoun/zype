@@ -14,7 +14,7 @@ const ChatPage = () => {
 
   return (
     <div className="flex-1 flex flex-col dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl">
-      <ChatHeader user={{ username, id }} backUrl="/chats" />
+      <ChatHeader user={{ username, id }} />
       <main className="p-2 flex-1 flex flex-col-reverse gap-1.5 overflow-y-auto">
         {[...messages].reverse().map((msg) => {
           const options = {

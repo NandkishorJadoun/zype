@@ -13,10 +13,9 @@ const UserPage = () => {
 
   const { username, id } = user;
 
-
   return (
     <div className="flex-1 flex flex-col dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl">
-      <ChatHeader user={{ username, id }} backUrl="/users" />
+      <ChatHeader user={{ username, id }} />
       <main className="p-2 flex-1 flex items-center justify-center gap-1.5 overflow-y-auto">
         <div className="max-w-sm w-full p-6 text-center bg-slate-800/50 border dark:border-slate-700 rounded-2xl backdrop-blur-sm shadow-xl">
           <HugeiconsIcon
@@ -30,14 +29,12 @@ const UserPage = () => {
             Send a friendly "Hello" to your new friend to get things moving.
           </p>
 
-          <button
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-900/20"
-          >
+          <button className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-900/20">
             Say Hello
           </button>
         </div>
       </main>
-     <Form
+      <Form
         method="POST"
         className=" border p-1 mx-3 mb-2 dark:border-slate-700 dark:bg-slate-950/15 backdrop-blur-xs flex gap-1 rounded-4xl h-16 items-center"
       >

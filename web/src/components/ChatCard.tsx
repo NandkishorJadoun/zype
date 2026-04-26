@@ -1,4 +1,4 @@
-import { Link, useFetcher } from "react-router";
+import { Link, NavLink, useFetcher } from "react-router";
 import type { Chat } from "../types";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { User02FreeIcons, MoreVerticalIcon } from "@hugeicons/core-free-icons";
@@ -20,7 +20,7 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
   const message = undefined;
 
   return (
-    <div className="border-b dark:border-b-slate-800 py-3 flex items-center gap-4">
+    <div className=" py-3 px-2 flex items-center gap-4 has-[.active]:bg-slate-800 rounded-xl">
       <Link
         to={`/users/${user.id}`}
         className="border dark:border-slate-700 w-10 h-10 rounded-full flex dark:bg-slate-900 items-center justify-center"
@@ -28,10 +28,10 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
         <HugeiconsIcon icon={User02FreeIcons} />
       </Link>
       <div className="flex-1 flex justify-between items-center">
-        <Link className="flex-1" to={`/chats/${id}`}>
+        <NavLink className="flex-1" to={`/chats/${id}`}>
           <p className="font-semibold">{user.username}</p>
           <p className="opacity-75">{message ?? "Some Message"}</p>
-        </Link>
+        </NavLink>
 
         <div>
           <button
@@ -96,9 +96,7 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
           <div className="flex flex-col sm:flex-row-reverse gap-3">
             <button
               className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 font-semibold rounded-xl transition-colors active:scale-95"
-              onClick={() => {
-                fetcher.submit({ id }, { method: "delete" });
-              }}
+              onClick={() => fetcher.submit({ id }, { method: "delete" })}
             >
               Delete Chat
             </button>

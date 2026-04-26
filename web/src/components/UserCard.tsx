@@ -5,10 +5,7 @@ import { User02FreeIcons } from "@hugeicons/core-free-icons";
 
 export const UserCard = ({ user }: { user: User }) => {
   const { username, id } = user;
-
-  // TODO: add about feature
-
-  const about = undefined;
+  const about = user.about || "Nothing here… for now.";
 
   return (
     <div className="py-3 px-2 flex items-center gap-4 has-[.active]:bg-slate-800 rounded-xl">
@@ -18,9 +15,9 @@ export const UserCard = ({ user }: { user: User }) => {
       >
         <HugeiconsIcon icon={User02FreeIcons} />
       </Link>
-      <NavLink to={`/chats/user/${id}`} className="flex-1">
+      <NavLink to={`/chats/user/${id}`} className="min-w-0 flex-1">
         <p className="font-semibold">{username}</p>
-        <p className="opacity-75">{about ?? "I Love Zype"}</p>
+        <p className="text-sm opacity-75 min-w-0 truncate">{about}</p>
       </NavLink>
     </div>
   );

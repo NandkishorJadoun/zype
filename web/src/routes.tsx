@@ -4,7 +4,7 @@ const AuthPage = lazy(() => import("./pages/Auth.page"));
 const UserProfilePage = lazy(() => import("./pages/UserProfile.page"));
 const UserPage = lazy(() => import("./pages/User.page"));
 const AppLayout = lazy(() => import("./layouts/App.layout"));
-const ChatListPage = lazy(() => import("./pages/ChatList.page"));
+const IndexPage = lazy(() => import("./pages/Index.page"));
 const ChatPage = lazy(() => import("./pages/Chat.page"));
 
 import { authMiddleware } from "./utils/authMiddleware";
@@ -31,7 +31,7 @@ const routes = [
     children: [
       {
         index: true,
-        Component: ChatListPage,
+        Component: IndexPage,
       },
       {
         path: "chats/:chatId",

@@ -1,4 +1,4 @@
-import { userContext } from "./userContext";
+import { userContext } from "../utils/userContext";
 import { redirect, type ActionFunction } from "react-router";
 
 export const createChatAction: ActionFunction = async ({ request, context, params }) => {

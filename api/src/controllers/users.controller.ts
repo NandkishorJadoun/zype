@@ -28,7 +28,8 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
             select: {
                 id: true,
                 username: true,
-                email: true,
+                avatar: true,
+                about: true,
             }
         })
 
@@ -58,12 +59,40 @@ const getUserProfile = async (req: Request, res: Response, next: NextFunction) =
             select: {
                 id: true,
                 username: true,
+                avatar: true,
+                about: true,
             }
         })
 
         if (!user) {
             return res.status(404).json({ message: `User with ID "${userId}" not found` })
         }
+
+        return res.status(200).json(user)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getCurrentUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { id } = req.user
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                avatar: true,
+                about: true
+            }
+        })
 
         return res.status(200).json(user)
     } catch (error) {
@@ -109,4 +138,4 @@ const patchUserProfile = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
-export { getUsers, getUserProfile, patchUserProfile }
+export { getUsers, getUserProfile, getCurrentUserProfile, patchUserProfile }

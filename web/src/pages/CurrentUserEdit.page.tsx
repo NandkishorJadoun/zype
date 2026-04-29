@@ -1,10 +1,11 @@
 import { Form, useNavigate, useActionData, useLoaderData } from "react-router";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { User02Icon, ArrowLeft02Icon, Pen } from "@hugeicons/core-free-icons";
+import { ArrowLeft02Icon, Pen } from "@hugeicons/core-free-icons";
 import type { User } from "../types";
 import { useState, useEffect } from "react";
 import type { FormValidationError } from "../types";
 import { FieldErrors } from "../components/FieldErrors";
+import { UserAvatar } from "../components/UserAvatar";
 
 const CurrentUserEditPage = () => {
   const navigate = useNavigate();
@@ -28,23 +29,6 @@ const CurrentUserEditPage = () => {
 
   const { username, avatar, about } = user;
 
-  const userAvatar = avatar ? (
-    <img
-      src={avatar}
-      alt={`${username}'s profile picture`}
-      className="size-full object-cover rounded-full"
-    />
-  ) : (
-    <div className="flex size-full items-center justify-center">
-      <HugeiconsIcon
-        icon={User02Icon}
-        color="white"
-        strokeWidth={0.5}
-        className="size-24 opacity-90"
-      />
-    </div>
-  );
-
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border dark:border-slate-800 dark:bg-slate-900/90 overflow-y-auto">
       <header className="relative flex items-center justify-center border-b border-slate-800 px-4 py-4">
@@ -65,7 +49,7 @@ const CurrentUserEditPage = () => {
         encType="multipart/form-data"
         method="patch"
       >
-        <div className="relative mx-auto size-40 rounded-full border border-slate-700 bg-slate-950/40 shadow-xl">
+        <div className="text-center text-nowrap relative mx-auto size-40 rounded-full border border-slate-700 bg-slate-950/40 shadow-xl">
           {previewUrl ? (
             <img
               src={previewUrl}
@@ -73,7 +57,7 @@ const CurrentUserEditPage = () => {
               className="size-full object-cover rounded-full"
             />
           ) : (
-            userAvatar
+            <UserAvatar avatar={avatar} username={username} />
           )}
 
           <label
@@ -86,6 +70,7 @@ const CurrentUserEditPage = () => {
             type="file"
             name="avatar"
             id="avatar"
+            accept="image/*"
             className="opacity-0 size-0"
             onChange={handleFileChange}
           />

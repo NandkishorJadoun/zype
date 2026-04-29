@@ -19,13 +19,23 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
   // TODO: add latest message in response
   const message = undefined;
 
+  const userAvatar = user.avatar ? (
+    <img
+      src={user.avatar}
+      alt={`${user.username}'s profile picture`}
+      className="size-full"
+    />
+  ) : (
+    <HugeiconsIcon icon={User02FreeIcons} />
+  );
+
   return (
     <div className=" py-3 px-2 flex items-center gap-4 has-[.active]:bg-slate-800 rounded-xl">
       <Link
         to={`/users/${user.id}`}
-        className="border dark:border-slate-700 w-10 h-10 rounded-full flex dark:bg-slate-900 items-center justify-center"
+        className="border dark:border-slate-700 w-10 h-10 overflow-hidden rounded-full flex dark:bg-slate-900 items-center justify-center"
       >
-        <HugeiconsIcon icon={User02FreeIcons} />
+        {userAvatar}
       </Link>
       <div className="flex-1 flex justify-between items-center">
         <NavLink className="flex-1" to={`/chats/${id}`}>

@@ -1,30 +1,14 @@
 import { useLoaderData, useNavigate } from "react-router";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowLeft02Icon, User02Icon } from "@hugeicons/core-free-icons";
+import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import type { User } from "../types";
+import { UserAvatar } from "../components/UserAvatar";
 
 const UserProfilePage = () => {
   const navigate = useNavigate();
   const user: User = useLoaderData();
 
   const { username, avatar, about } = user;
-
-  const userAvatar = avatar ? (
-    <img
-      src={avatar}
-      alt={`${username}'s profile picture`}
-      className="size-full object-cover rounded-full"
-    />
-  ) : (
-    <div className="flex size-full items-center justify-center">
-      <HugeiconsIcon
-        icon={User02Icon}
-        color="white"
-        strokeWidth={0.5}
-        className="size-24 opacity-90"
-      />
-    </div>
-  );
 
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border dark:border-slate-800 dark:bg-slate-900/90">
@@ -43,7 +27,7 @@ const UserProfilePage = () => {
       <div className="px-4 py-6">
         <div className="mx-auto flex max-w-md flex-col items-center">
           <div className="size-40 rounded-full border border-slate-700 bg-slate-950/40 shadow-xl overflow-hidden">
-            {userAvatar}
+            <UserAvatar avatar={avatar} username={username} />
           </div>
 
           <p className="mt-4 text-center text-xl font-semibold">{username}</p>

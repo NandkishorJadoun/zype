@@ -5,7 +5,11 @@ export const FieldErrors = ({
   validationErrors,
 }: {
   fieldName: string;
-  validationErrors: null | FormValidationError | FormValidationError[];
+  validationErrors:
+    | null
+    | undefined
+    | FormValidationError
+    | FormValidationError[];
 }) => {
   if (!validationErrors) return null;
 

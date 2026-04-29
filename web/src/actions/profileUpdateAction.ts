@@ -9,8 +9,14 @@ export const updateProfileAction: ActionFunction = async ({ request, context }) 
     }
 
     const formData = await request.formData();
-    const url = `${import.meta.env.VITE_API_URL}/users/me`
 
+    const avatar = formData.get("avatar")
+
+    if (avatar instanceof File && !avatar.name && !avatar.size) {
+        formData.delete("avatar")
+    }
+
+    const url = `${import.meta.env.VITE_API_URL}/users/me`
     const res = await fetch(url, {
         method: "PATCH",
         headers: {
@@ -20,8 +26,9 @@ export const updateProfileAction: ActionFunction = async ({ request, context }) 
     })
 
     if (!res.ok) {
-        throw new Error("Something is wrong")
+        const { errors } = await res.json()
+        return errors
     }
-    
-    return { success: true };
+
+    return redirect("/users/me")
 }

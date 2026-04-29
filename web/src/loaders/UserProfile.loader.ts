@@ -3,11 +3,17 @@ import { redirect, type LoaderFunction } from "react-router";
 
 export const userProfileLoader: LoaderFunction = async ({ context, params }) => {
     const { userId } = params
-    const token = context.get(userContext)?.token
+    const session = context.get(userContext)
 
-    if (!token) {
+    if (!session) {
         throw redirect("/auth")
     }
+
+    if (userId === session.user.id) {
+        throw redirect("/users/me")
+    }
+
+    const { token } = session
 
     try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}`, {
@@ -16,8 +22,8 @@ export const userProfileLoader: LoaderFunction = async ({ context, params }) => 
             }
         })
 
-        const users = await res.json()
-        return users
+        const user = await res.json()
+        return user;
 
     } catch (error) {
         console.error(error)

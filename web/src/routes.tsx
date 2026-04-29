@@ -6,6 +6,10 @@ const UserPage = lazy(() => import("./pages/User.page"));
 const AppLayout = lazy(() => import("./layouts/App.layout"));
 const IndexPage = lazy(() => import("./pages/Index.page"));
 const ChatPage = lazy(() => import("./pages/Chat.page"));
+const CurrentUserProfilePage = lazy(
+  () => import("./pages/CurrentUserProfile.page"),
+);
+const CurrentUserEditPage = lazy(() => import("./pages/CurrentUserEdit.page"));
 
 import { authMiddleware } from "./utils/authMiddleware";
 
@@ -13,10 +17,11 @@ import { userProfileLoader } from "./loaders/UserProfile.loader";
 import { userLoader } from "./loaders/User.loader";
 import { appLoader } from "./loaders/App.loader";
 import { chatLoader } from "./loaders/Chat.loader";
-
+import { currentUserProfileLoader } from "./loaders/CurrentUserProfile.loader";
 import { deleteChatAction } from "./actions/deleteChatAction";
 import { createChatAction } from "./actions/createChatAction";
 import { sendMessageAction } from "./actions/sendMessageAction";
+import { updateProfileAction } from "./actions/profileUpdateAction";
 
 const routes = [
   {
@@ -49,6 +54,17 @@ const routes = [
         path: "users/:userId",
         loader: userProfileLoader,
         Component: UserProfilePage,
+      },
+      {
+        path: "users/me",
+        loader: currentUserProfileLoader,
+        Component: CurrentUserProfilePage,
+      },
+      {
+        path: "users/me/edit",
+        loader: currentUserProfileLoader,
+        Component: CurrentUserEditPage,
+        action: updateProfileAction,
       },
     ],
   },

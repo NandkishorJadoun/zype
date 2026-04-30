@@ -5,7 +5,8 @@ import { usersRouter } from "./routes/users.router";
 import { chatsRouter } from "./routes/chats.router";
 import { UploadValidationError } from "./utils/UploadValidationError";
 import multer from "multer";
-export const app: Express = express()
+
+const app = express()
 
 app.use(cors())
 app.use(json())
@@ -25,3 +26,5 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     }
     res.status(500).json({ message: "Internal Server Error" })
 })
+
+export default app;

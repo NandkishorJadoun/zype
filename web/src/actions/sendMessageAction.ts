@@ -4,13 +4,17 @@ import { redirect, type ActionFunction } from "react-router";
 export const sendMessageAction: ActionFunction = async ({ request, context, params }) => {
     const formData = await request.formData();
     const message = formData.get("message");
+
+    if (typeof message === "string" && !message.trim()) {
+        return null;
+    }
+
     const token = context.get(userContext)?.token
-
-    const { chatId } = params
-
     if (!token) {
         throw redirect("/auth")
     }
+
+    const { chatId } = params
 
     const url = `${import.meta.env.VITE_API_URL}/chats/${chatId}`
 

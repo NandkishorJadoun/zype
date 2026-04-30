@@ -30,5 +30,6 @@ export const PatchFormData = z.object({
         .string()
         .trim()
         .max(50, { message: "About field must be at most 50 characters long" })
+        .transform((val) => (val.length === 0 ? null : val))
         .nullable()
 })

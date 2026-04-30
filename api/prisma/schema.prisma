@@ -35,6 +35,7 @@ model Message {
 model Chat {
   id         String    @id @default(cuid())
   created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   messages   Message[]
   users      User[]
 

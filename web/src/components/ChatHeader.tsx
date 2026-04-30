@@ -6,7 +6,7 @@ import type { User } from "../types";
 export const ChatHeader = ({ user }: { user: User }) => {
   const { id, username, avatar } = user;
   return (
-    <header className="dark:bg-slate-900 relative flex justify-center items-center border-b px-3 py-4 dark:border-slate-800 rounded-t-2xl">
+    <div className="dark:bg-slate-900 relative flex justify-center items-center border-b px-3 py-4 dark:border-slate-800 rounded-t-2xl">
       <Link
         to={"/"}
         className="absolute left-4 inline-flex items-center justify-center rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
@@ -32,6 +32,6 @@ export const ChatHeader = ({ user }: { user: User }) => {
         </div>
         <p className="font-semibold">{username}</p>
       </Link>
-    </header>
+    </div>
   );
 };

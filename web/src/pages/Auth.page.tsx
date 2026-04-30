@@ -25,7 +25,7 @@ const AuthPage = () => {
 
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
-  if (token && user) return <Navigate to={"/chats"} />;
+  if (token && user) return <Navigate to={"/"} />;
 
   const submitSignUpForm = async (e: React.SubmitEvent) => {
     e.preventDefault();

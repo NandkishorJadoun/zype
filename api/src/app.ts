@@ -6,7 +6,7 @@ import { chatsRouter } from "./routes/chats.router";
 import { UploadValidationError } from "./utils/UploadValidationError";
 import multer from "multer";
 
-const app = express()
+const app: Express = express()
 
 app.use(cors())
 app.use(json())

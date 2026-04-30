@@ -7,14 +7,14 @@ import { SentIcon } from "@hugeicons/core-free-icons";
 const ChatPage = () => {
   const fetcher = useFetcher();
   const chat: Chat = useLoaderData();
-  const { username, id } = chat.users[0];
+  const user = chat.users[0];
   const { messages } = chat;
 
   const key = messages.at(-1)?.id || "key";
 
   return (
     <div className="flex-1 flex flex-col dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl">
-      <ChatHeader user={{ username, id }} />
+      <ChatHeader user={user} />
       <main className="p-2 flex-1 flex flex-col-reverse gap-1.5 overflow-y-auto">
         {[...messages].reverse().map((msg) => {
           const options = {
@@ -36,15 +36,15 @@ const ChatPage = () => {
           return (
             <div
               key={msg.id}
-              className={`${msg.userId === id ? "self-start" : "self-end"}`}
+              className={`${msg.userId === user.id ? "self-start" : "self-end"}`}
             >
               <p
-                className={`rounded-tl-xl rounded-tr-xl p-2 break-all ${msg.userId === id ? receiverStyles : senderStyles}`}
+                className={`rounded-tl-xl rounded-tr-xl p-2 break-all ${msg.userId === user.id ? receiverStyles : senderStyles}`}
               >
                 {msg.data}
               </p>
               <p
-                className={`opacity-75 text-sm mt-0.5 ${msg.userId === id ? "text-start" : "text-end"}`}
+                className={`opacity-75 text-sm mt-0.5 ${msg.userId === user.id ? "text-start" : "text-end"}`}
               >
                 {time}
               </p>

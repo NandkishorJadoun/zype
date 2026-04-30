@@ -11,11 +11,9 @@ const UserPage = () => {
     return <Navigate to={`/chats/${chat.id}`} />;
   }
 
-  const { username, id } = user;
-
   return (
     <div className="flex-1 flex flex-col dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl">
-      <ChatHeader user={{ username, id }} />
+      <ChatHeader user={user} />
       <main className="p-2 flex-1 flex items-center justify-center gap-1.5 overflow-y-auto">
         <div className="max-w-3xs w-full p-6 text-center bg-slate-800/50 border dark:border-slate-700 rounded-2xl shadow-2xl">
           <HugeiconsIcon

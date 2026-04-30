@@ -52,7 +52,7 @@ const AuthPage = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      return navigate("/chats", { replace: true });
+      return navigate("/", { replace: true });
     } catch (error) {
       console.error(error);
     }
@@ -83,7 +83,7 @@ const AuthPage = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      return navigate("/chats", { replace: true });
+      return navigate("/", { replace: true });
     } catch (error) {
       console.error(error);
     }

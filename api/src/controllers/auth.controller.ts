@@ -30,7 +30,7 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = user;
     const token = jwt.sign({ id }, env.JWT_SECRET_KEY);
-    return res.json({ user: { id, username, email }, token });
+    return res.json({ user: { id, email }, token });
 
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -65,10 +65,10 @@ const postSignIn = async (req: Request, res: Response, next: NextFunction) => {
       req.login(user, { session: false }, (err) => {
         if (err) return res.send(err);
 
-        const { id, username, email } = user;
+        const { id, email } = user;
 
         const token = jwt.sign({ id }, env.JWT_SECRET_KEY);
-        return res.json({ user: { id, username, email }, token });
+        return res.json({ user: { id, email }, token });
       });
     })(req, res);
 

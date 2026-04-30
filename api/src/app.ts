@@ -21,7 +21,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     if (err instanceof multer.MulterError || err instanceof UploadValidationError) {
         const { field, message } = err
         const status = err instanceof UploadValidationError ? 415 : 400
-        return res.status(status).json({ fieldName: field, message })
+        return res.status(status).json({ errors: [{ fieldName: field, message }] })
     }
     res.status(500).json({ message: "Internal Server Error" })
 })

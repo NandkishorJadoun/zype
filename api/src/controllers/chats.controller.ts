@@ -11,26 +11,25 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
     const { id } = req.user;
 
     try {
-        const chats = await prisma.user.findUnique({
-            where: { id },
-            select: {
-                chats: {
-                    include: {
-                        users: {
-                            where: {
-                                id: {
-                                    not: id
-                                }
-                            },
-                            select: {
-                                id: true,
-                                username: true,
-                                avatar: true
-                            }
-                        }
+        const chats = await prisma.chat.findMany({
+            where: { users: { some: { id } } },
+            include: {
+                users: {
+                    where: {
+                        id: { not: id }
+                    },
+                    select: {
+                        id: true, username: true, avatar: true
                     }
+                },
+                messages: {
+                    take: 1,
+                    orderBy: { created_at: "desc" }
                 }
             },
+            orderBy: {
+                updated_at: "desc"
+            }
         })
 
         return res.status(200).json(chats)
@@ -102,13 +101,28 @@ export const postChat = async (req: Request, res: Response, next: NextFunction) 
     const msg = req.body.message;
 
     try {
-        const message = await prisma.message.create({
+        const updatedChat = await prisma.chat.update({
+            where: { id: chatId },
             data: {
-                userId, chatId, data: msg
-            }
-        })
+                updated_at: new Date(),
+                messages: {
+                    create: {
+                        data: msg,
+                        userId: userId,
+                    },
+                },
+            },
+            include: {
+                messages: {
+                    orderBy: { created_at: 'desc' },
+                    take: 1,
+                },
+            },
+        });
 
-        res.status(201).json(message)
+        const newMessage = updatedChat.messages[0];
+
+        res.status(201).json(newMessage)
 
     } catch (error) {
         next(error)

@@ -24,8 +24,8 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
                             },
                             select: {
                                 id: true,
-                                email: true,
                                 username: true,
+                                avatar: true
                             }
                         }
                     }
@@ -64,7 +64,15 @@ export const getChat = async (req: Request, res: Response, next: NextFunction) =
                 messages: true,
                 users: {
                     where:
-                        { id: { not: userId } }
+                    {
+                        id: { not: userId }
+                    },
+                    select: {
+                        id: true,
+                        email: true,
+                        username: true,
+                        avatar: true,
+                    }
                 },
             }
         })
@@ -189,6 +197,7 @@ export const getUserChat = async (req: Request, res: Response, next: NextFunctio
             select: {
                 id: true,
                 username: true,
+                avatar: true
             }
         })
 

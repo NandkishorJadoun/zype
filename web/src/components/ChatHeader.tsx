@@ -4,6 +4,8 @@ import { ArrowLeft02Icon, User02FreeIcons } from "@hugeicons/core-free-icons";
 import type { User } from "../types";
 
 export const ChatHeader = ({ user }: { user: User }) => {
+  const { id, username, avatar } = user;
+  console.log(avatar);
   return (
     <header className="dark:bg-slate-900 relative flex justify-center items-center border-b px-3 py-4 dark:border-slate-800 rounded-t-2xl">
       <Link
@@ -17,11 +19,19 @@ export const ChatHeader = ({ user }: { user: User }) => {
           strokeWidth={2.5}
         />
       </Link>
-      <Link to={`/users/${user.id}`} className="flex items-center gap-2">
+      <Link to={`/users/${id}`} className="flex items-center gap-2">
         <div className="border dark:border-slate-700 w-9 h-9 rounded-full flex dark:bg-slate-900 items-center justify-center">
-          <HugeiconsIcon icon={User02FreeIcons} />
+          {avatar ? (
+            <img
+              className="size-full object-cover rounded-full"
+              src={avatar}
+              alt={`${username}'s profile`}
+            />
+          ) : (
+            <HugeiconsIcon icon={User02FreeIcons} />
+          )}
         </div>
-        <p className="font-semibold">{user.username}</p>
+        <p className="font-semibold">{username}</p>
       </Link>
     </header>
   );

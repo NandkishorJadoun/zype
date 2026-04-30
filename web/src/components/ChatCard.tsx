@@ -22,7 +22,7 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
   const userAvatar = user.avatar ? (
     <img
       src={user.avatar}
-      alt={`${user.username}'s profile picture`}
+      alt={`${user.username}'s profile`}
       className="size-full"
     />
   ) : (

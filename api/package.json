@@ -8,7 +8,8 @@
     "test": "vitest",
     "dev": "pnpx tsx watch src/server.ts",
     "typecheck": "tsgo --noEmit",
-    "build": "tsgo --build"
+    "build": "prisma generate && tsc",
+    "start": "node ./dist/server.js"
   },
   "keywords": [],
   "author": "",

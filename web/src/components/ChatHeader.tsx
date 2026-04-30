@@ -5,7 +5,6 @@ import type { User } from "../types";
 
 export const ChatHeader = ({ user }: { user: User }) => {
   const { id, username, avatar } = user;
-  console.log(avatar);
   return (
     <header className="dark:bg-slate-900 relative flex justify-center items-center border-b px-3 py-4 dark:border-slate-800 rounded-t-2xl">
       <Link

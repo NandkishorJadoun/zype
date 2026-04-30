@@ -16,8 +16,7 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
   const isDeleting = fetcher.formData?.get("id") === String(id);
   if (isDeleting) return null;
 
-  // TODO: add latest message in response
-  const message = undefined;
+  const message = chat.messages[0].data;
 
   const userAvatar = user.avatar ? (
     <img

@@ -17,7 +17,7 @@ export const appLoader: LoaderFunction = async ({ context }) => {
         }),
     ]);
 
-    const { chats } = await chatsRes.json();
+    const chats = await chatsRes.json();
     const { users } = await usersRes.json();
     return { chats, users };
 } 

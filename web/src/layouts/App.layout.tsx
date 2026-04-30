@@ -4,7 +4,7 @@ import type { User, Chat } from "../types";
 import { ChatCard } from "../components/ChatCard";
 import { UserCard } from "../components/UserCard";
 
-const ChatListLayout = () => {
+const AppLayout = () => {
   const [activeTab, setActiveTab] = useState(0);
   const { chats, users }: { chats: Chat[]; users: User[] } = useLoaderData();
   const navigate = useNavigate();
@@ -70,4 +70,4 @@ const ChatListLayout = () => {
   );
 };
 
-export default ChatListLayout;
+export default AppLayout;

@@ -119,7 +119,7 @@ const patchUserProfile = async (req: Request, res: Response, next: NextFunction)
 
         const user = await prisma.user.update({
             where: { id },
-            data: { avatar, ...userForm },
+            data: { ...(avatar && { avatar }), ...userForm },
             select: { id: true, username: true, avatar: true, about: true }
         })
 

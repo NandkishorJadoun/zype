@@ -1,6 +1,6 @@
 import express, { Router } from "express";
-import { getChats, getChat, deleteChat, postChat, createUserChat, getUserChat } from "../controllers/chats.controller";
-import { passport } from "../libs/passport";
+import { getChats, getChat, deleteChat, postChat, createUserChat, getUserChat } from "../controllers/chats.controller.js";
+import { passport } from "../libs/passport.js";
 
 export const chatsRouter: Router = express.Router();
 

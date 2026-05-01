@@ -1,7 +1,7 @@
 import multer from "multer"
 import type { Request } from "express"
 import type { FileFilterCallback } from "multer"
-import { UploadValidationError } from "../utils/UploadValidationError"
+import { UploadValidationError } from "../utils/UploadValidationError.js"
 
 const storage = multer.memoryStorage()
 const limits = { fileSize: 2 * 1024 * 1024 }

@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { UserFormData } from "../schemas/auth.schema";
-import { prisma } from "../libs/prisma";
-import { passport } from "../libs/passport"
+import { UserFormData } from "../schemas/auth.schema.js";
+import { prisma } from "../libs/prisma.js";
+import { passport } from "../libs/passport.js"
 import jwt from "jsonwebtoken";
-import { env } from "../schemas/env.schema";
+import { env } from "../schemas/env.schema.js";
 import { Prisma, type User } from "@prisma/client";
 import type { IVerifyOptions } from "passport-local";
 

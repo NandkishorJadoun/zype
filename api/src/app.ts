@@ -1,9 +1,9 @@
 import cors from "cors";
 import express, { json, urlencoded, type Express, type Request, type Response, type NextFunction } from "express";
-import { authRouter } from "./routes/auth.router";
-import { usersRouter } from "./routes/users.router";
-import { chatsRouter } from "./routes/chats.router";
-import { UploadValidationError } from "./utils/UploadValidationError";
+import { authRouter } from "./routes/auth.router.js";
+import { usersRouter } from "./routes/users.router.js";
+import { chatsRouter } from "./routes/chats.router.js";
+import { UploadValidationError } from "./utils/UploadValidationError.js";
 import multer from "multer";
 
 const app: Express = express()

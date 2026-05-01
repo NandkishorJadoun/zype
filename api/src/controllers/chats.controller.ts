@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { prisma } from "../libs/prisma";
+import { prisma } from "../libs/prisma.js";
 import { Prisma, type Chat } from "@prisma/client";
 
 export const getChats = async (req: Request, res: Response, next: NextFunction) => {

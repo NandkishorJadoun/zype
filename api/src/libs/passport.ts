@@ -1,8 +1,8 @@
 import passport from "passport";
 import passportJWT from "passport-jwt"
 import passportLocal from "passport-local";
-import { prisma } from "./prisma"
-import { env } from "../schemas/env.schema";
+import { prisma } from "./prisma.js"
+import { env } from "../schemas/env.schema.js";
 import bcrypt from "bcryptjs";
 
 const ExtractJWT = passportJWT.ExtractJwt;

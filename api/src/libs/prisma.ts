@@ -1,4 +1,4 @@
-import { env } from "../schemas/env.schema";
+import { env } from "../schemas/env.schema.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 

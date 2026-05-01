@@ -1,7 +1,7 @@
 import express, { Router } from "express";
-import { getUsers, getUserProfile, getCurrentUserProfile, patchUserProfile } from "../controllers/users.controller";
-import { passport } from "../libs/passport";
-import { upload } from "../libs/multer";
+import { getUsers, getUserProfile, getCurrentUserProfile, patchUserProfile } from "../controllers/users.controller.js";
+import { passport } from "../libs/passport.js";
+import { upload } from "../libs/multer.js";
 
 export const usersRouter: Router = express.Router();
 

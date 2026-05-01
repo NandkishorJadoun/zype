@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import { prisma } from "../libs/prisma";
+import { prisma } from "../libs/prisma.js";
 import { Prisma } from "@prisma/client";
-import { uploadOnCloudinary } from "../utils/cloudinary";
-import { PatchFormData } from "../schemas/auth.schema";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { PatchFormData } from "../schemas/auth.schema.js";
 import { ZodError } from "zod";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,19 +1,43 @@
-import { useState } from "react";
-import {
-  useLoaderData,
-  Outlet,
-  Link,
-  useNavigate,
-  useLocation,
-} from "react-router";
-import type { User, Chat } from "../types";
-import { ChatCard } from "../components/ChatCard";
-import { UserCard } from "../components/UserCard";
+import { createFileRoute, Link, Outlet, redirect, useLocation, useNavigate } from '@tanstack/react-router'
+import { UserCard } from '../components/UserCard';
+import { ChatCard } from '../components/ChatCard';
+import type { Chat, User } from '../types';
+import { useState } from 'react';
+import { useAuth } from "../context/auth";
 
-const AppLayout = () => {
+export const Route = createFileRoute('/_authenticated')({
+  beforeLoad: ({ context }) => {
+    if (!context.auth.isAuthenticated || !context.auth.user) {
+      throw redirect({
+        to: '/auth',
+      })
+    }
+    return {
+      user: context.auth.user,
+    }
+  },
+  loader: async ({ context }) => {
+    const { token } = context.user
+    const BASE_URL = import.meta.env.VITE_API_URL;
+    const options = { headers: { Authorization: `Bearer ${token}` } }
+
+    const [chatsRes, usersRes] = await Promise.all([
+      fetch(`${BASE_URL}/chats`, options),
+      fetch(`${BASE_URL}/users`, options),
+    ]);
+
+    const chats = await chatsRes.json();
+    const { users } = await usersRes.json();
+    return { chats, users };
+  },
+  component: RouteComponent,
+})
+
+function RouteComponent() {
   const [activeTab, setActiveTab] = useState(0);
-  const { chats, users }: { chats: Chat[]; users: User[] } = useLoaderData();
-  const navigate = useNavigate();
+  const { chats, users }: { chats: Chat[]; users: User[] } = Route.useLoaderData();
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const { pathname } = useLocation();
   const isIndex = pathname === "/";
 
@@ -31,9 +55,8 @@ const AppLayout = () => {
           <button
             className="hover:underline"
             onClick={() => {
-              const keysToRemove = ["user", "token"];
-              keysToRemove.forEach((key) => localStorage.removeItem(key));
-              return navigate("/auth");
+              logout()
+              navigate({ to: "/auth" })
             }}
           >
             Logout
@@ -91,5 +114,3 @@ const AppLayout = () => {
     </div>
   );
 };
-
-export default AppLayout;

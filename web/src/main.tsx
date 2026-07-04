@@ -1,13 +1,34 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./styles/globals.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
-import routes from "./routes";
+import ReactDOM from 'react-dom/client'
+import { RouterProvider } from '@tanstack/react-router'
+import { AuthProvider, useAuth } from './context/auth'
+import "./styles/globals.css"
+import { createRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen'
+import { StrictMode } from 'react'
 
-const router = createBrowserRouter(routes);
 
-createRoot(document.getElementById("root")!).render(
+const router = createRouter({
+  routeTree,
+  context: {
+    auth: undefined!,
+  },
+})
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+function InnerApp() {
+  const auth = useAuth()
+  return <RouterProvider router={router} context={{ auth }} />
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
+    <AuthProvider>
+      <InnerApp />
+    </AuthProvider>
+  </StrictMode>
+)

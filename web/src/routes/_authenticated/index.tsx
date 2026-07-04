@@ -1,6 +1,12 @@
-import { HugeiconsIcon } from "@hugeicons/react";
-import { LookLeftIcon } from "@hugeicons/core-free-icons";
-const IndexPage = () => {
+import { LookLeftIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/_authenticated/')({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
   return (
     <div className="hidden sm:flex flex-1 dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl items-center justify-center p-3 ">
       <div className="max-w-3xs w-full p-6 text-center bg-slate-800/50 border dark:border-slate-700 rounded-2xl shadow-2xl">
@@ -17,6 +23,4 @@ const IndexPage = () => {
       </div>
     </div>
   );
-};
-
-export default IndexPage;
+}

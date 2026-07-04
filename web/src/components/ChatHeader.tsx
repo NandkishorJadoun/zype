@@ -1,7 +1,7 @@
-import { Link } from "react-router";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft02Icon, User02FreeIcons } from "@hugeicons/core-free-icons";
 import type { User } from "../types";
+import { Link } from "@tanstack/react-router";
 
 export const ChatHeader = ({ user }: { user: User }) => {
   const { id, username, avatar } = user;
@@ -18,7 +18,7 @@ export const ChatHeader = ({ user }: { user: User }) => {
           strokeWidth={2.5}
         />
       </Link>
-      <Link to={`/users/${id}`} className="flex items-center gap-2">
+      <Link to="/users/$userId" params={{ userId: id }} className="flex items-center gap-2">
         <div className="border dark:border-slate-700 w-9 h-9 rounded-full flex dark:bg-slate-900 items-center justify-center">
           {avatar ? (
             <img

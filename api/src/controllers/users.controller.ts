@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../libs/prisma.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/prisma/index.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { PatchFormData } from "../schemas/auth.schema.js";
 import { ZodError } from "zod";

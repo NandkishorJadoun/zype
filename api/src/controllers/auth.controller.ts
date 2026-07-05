@@ -5,7 +5,7 @@ import { prisma } from "../libs/prisma.js";
 import { passport } from "../libs/passport.js"
 import jwt from "jsonwebtoken";
 import { env } from "../schemas/env.schema.js";
-import { Prisma, type User } from "@prisma/client";
+import { Prisma, type User } from "../../generated/prisma/index.js";
 import type { IVerifyOptions } from "passport-local";
 
 const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -30,7 +30,7 @@ const postSignUp = async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = user;
     const token = jwt.sign({ id }, env.JWT_SECRET_KEY);
-    return res.json({ user: { id, email }, token });
+    return res.json({ id, token });
 
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -65,10 +65,10 @@ const postSignIn = async (req: Request, res: Response, next: NextFunction) => {
       req.login(user, { session: false }, (err) => {
         if (err) return res.send(err);
 
-        const { id, email } = user;
+        const { id } = user;
 
         const token = jwt.sign({ id }, env.JWT_SECRET_KEY);
-        return res.json({ user: { id, email }, token });
+        return res.json({ id, token });
       });
     })(req, res);
 

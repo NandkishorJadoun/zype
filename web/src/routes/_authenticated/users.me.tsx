@@ -1,23 +1,29 @@
 import { createFileRoute, Link, useCanGoBack, useRouter } from '@tanstack/react-router'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 import { UserAvatar } from '../../components/UserAvatar';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft02Icon, Edit03Icon } from '@hugeicons/core-free-icons';
 import type { User } from '../../types';
 
+const fetchMe = async (token: string, signal: AbortSignal) => {
+  const BASE_URL = import.meta.env.VITE_API_URL;
+  const options = { headers: { Authorization: `Bearer ${token}` }, signal }
+  const res = await fetch(`${BASE_URL}/users/me`, options)
+  if (!res.ok) throw new Error("Fail to load profile")
+  return res.json()
+}
+
+const meQueryOptions = (token: string) =>
+  queryOptions({
+    queryKey: ['me'],
+    queryFn: ({ signal }) => fetchMe(token, signal),
+  })
+
 export const Route = createFileRoute('/_authenticated/users/me')({
   loader: async ({ context }) => {
     const { token } = context.user
-    const BASE_URL = import.meta.env.VITE_API_URL;
-    const options = { headers: { Authorization: `Bearer ${token}` } }
-
-    const res = await fetch(`${BASE_URL}/users/me`, options)
-
-    if (!res.ok) {
-      throw new Error("Fail to load profile")
-    }
-
-    const user = await res.json()
-    return user;
+    await context.queryClient.ensureQueryData(meQueryOptions(token))
+    return { token }
   },
   component: RouteComponent,
 })
@@ -25,8 +31,9 @@ export const Route = createFileRoute('/_authenticated/users/me')({
 function RouteComponent() {
   const router = useRouter()
   const canGoBack = useCanGoBack()
-  const user: User = Route.useLoaderData();
-  const { email, username, avatar, about } = user;
+  const { token } = Route.useLoaderData()
+  const { data } = useQuery(meQueryOptions(token))
+  const { email, username, avatar, about }: User = data.user;
 
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border dark:border-slate-800 dark:bg-slate-900/90">

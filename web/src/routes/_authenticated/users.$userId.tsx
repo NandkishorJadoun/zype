@@ -1,8 +1,23 @@
 import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { createFileRoute, redirect, useCanGoBack, useRouter } from '@tanstack/react-router'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 import { UserAvatar } from '../../components/UserAvatar';
 import type { User } from '../../types';
+
+const fetchUser = async (token: string, userId: string, signal: AbortSignal) => {
+  const BASE_URL = import.meta.env.VITE_API_URL;
+  const options = { headers: { Authorization: `Bearer ${token}` }, signal }
+  const res = await fetch(`${BASE_URL}/users/${userId}`, options)
+  if (!res.ok) throw new Error("Fail to load profile")
+  return res.json()
+}
+
+const userQueryOptions = (token: string, userId: string) =>
+  queryOptions({
+    queryKey: ['users', userId, token],
+    queryFn: ({ signal }) => fetchUser(token, userId, signal),
+  })
 
 export const Route = createFileRoute('/_authenticated/users/$userId')({
   loader: async ({ context, params }) => {
@@ -10,20 +25,11 @@ export const Route = createFileRoute('/_authenticated/users/$userId')({
     const { userId } = params
 
     if (userId === id) {
-      return redirect({ to: "/users/me" })
+      throw redirect({ to: "/users/me" })
     }
 
-    const BASE_URL = import.meta.env.VITE_API_URL;
-    const options = { headers: { Authorization: `Bearer ${token}` } }
-
-    const res = await fetch(`${BASE_URL}/users/${userId}`, options)
-
-    if (!res.ok) {
-      throw new Error("Fail to load profile")
-    }
-
-    const user = await res.json()
-    return user;
+    await context.queryClient.ensureQueryData(userQueryOptions(token, userId))
+    return { token, userId }
   },
   component: RouteComponent,
 })
@@ -31,9 +37,12 @@ export const Route = createFileRoute('/_authenticated/users/$userId')({
 function RouteComponent() {
   const router = useRouter()
   const canGoBack = useCanGoBack()
-  const user: User = Route.useLoaderData();
+  const { token, userId } = Route.useLoaderData()
+  const { data } = useQuery(userQueryOptions(token, userId))
 
-  const { username, avatar, about } = user;
+  console.log("data", data)
+
+  const { username, avatar, about }: User = data.user
 
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border dark:border-slate-800 dark:bg-slate-900/90">

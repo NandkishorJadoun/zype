@@ -4,6 +4,33 @@ import { ChatCard } from '../components/ChatCard';
 import type { Chat, User } from '../types';
 import { useState } from 'react';
 import { useAuth } from "../context/auth";
+import { queryOptions, useQuery } from '@tanstack/react-query';
+
+const fetchChatsAndUsers = async (token: string, signal: AbortSignal) => {
+  const BASE_URL = import.meta.env.VITE_API_URL;
+  const options = { headers: { Authorization: `Bearer ${token}` }, signal }
+  const [chatsRes, usersRes] = await Promise.all([
+    fetch(`${BASE_URL}/chats`, options),
+    fetch(`${BASE_URL}/users`, options),
+  ]);
+
+  if (!chatsRes.ok || !usersRes.ok) {
+    throw new Error("Failed to fetch sidebar data");
+  }
+
+  const [{ chats }, { users }] = await Promise.all([
+    chatsRes.json(),
+    usersRes.json(),
+  ]);
+
+  return { chats, users }
+}
+
+const indexQueryOptions = (token: string) =>
+  queryOptions({
+    queryKey: ['index', token],
+    queryFn: ({ signal }) => fetchChatsAndUsers(token, signal),
+  })
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
@@ -17,25 +44,19 @@ export const Route = createFileRoute('/_authenticated')({
     }
   },
   loader: async ({ context }) => {
-    const { token } = context.user
-    const BASE_URL = import.meta.env.VITE_API_URL;
-    const options = { headers: { Authorization: `Bearer ${token}` } }
-
-    const [chatsRes, usersRes] = await Promise.all([
-      fetch(`${BASE_URL}/chats`, options),
-      fetch(`${BASE_URL}/users`, options),
-    ]);
-
-    const chats = await chatsRes.json();
-    const { users } = await usersRes.json();
-    return { chats, users };
+    const { user, queryClient } = context
+    const { token } = user
+    await queryClient.ensureQueryData(indexQueryOptions(token))
+    return { token }
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const [activeTab, setActiveTab] = useState(0);
-  const { chats, users }: { chats: Chat[]; users: User[] } = Route.useLoaderData();
+  const { token }: { token: string } = Route.useLoaderData();
+  const { data } = useQuery(indexQueryOptions(token))
+
   const navigate = useNavigate()
   const { logout } = useAuth()
   const { pathname } = useLocation();
@@ -90,15 +111,15 @@ function RouteComponent() {
             </div>
             <section className="p-2 dark:bg-slate-900 dark:border-slate-800 border rounded-b-2xl flex flex-col flex-1 overflow-y-auto">
               {activeTab === 0 ? (
-                chats.length > 0 ? (
-                  chats.map((chat) => {
+                data ? (
+                  data.chats.map((chat: Chat) => {
                     return <ChatCard key={chat.id} chat={chat} />;
                   })
                 ) : (
                   <p className="m-auto text-slate-500 text-sm">No chats yet</p>
                 )
-              ) : users.length > 0 ? (
-                users.map((user) => {
+              ) : data ? (
+                data.users.map((user: User) => {
                   return <UserCard key={user.id} user={user} />;
                 })
               ) : (

@@ -1,6 +1,6 @@
 import { SentIcon, SmilePlusIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate, useRouter } from '@tanstack/react-router'
 import { ChatHeader } from '../../components/ChatHeader';
 import type { Chat, User } from '../../types';
 import React, { useState } from 'react';
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/_authenticated/chats/user/$userId')({
 
 function RouteComponent() {
   const { user, chat, token }: { user: User; chat: Chat | null; token: string } = Route.useLoaderData();
-  const navigate = useNavigate()
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("hello this is testing!")
 
@@ -58,10 +58,7 @@ function RouteComponent() {
         throw new Error("Failed to create chat")
       }
 
-      const { id } = await res.json()
-
-      return navigate({ to: "/chats/$chatId", params: { chatId: id } })
-
+      await router.invalidate()
     } catch (error) {
       console.log(error)
     } finally {

@@ -27,8 +27,6 @@ function RouteComponent() {
   const { token, userId } = Route.useLoaderData()
   const { data } = useQuery(userQueryOptions(token, userId))
 
-  console.log("data", data)
-
   const { username, avatar, about }: User = data.user
 
   return (

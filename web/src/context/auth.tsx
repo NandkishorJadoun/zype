@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface AuthUser {
     id: string,
@@ -47,10 +48,12 @@ const setStoredUser = (user: AuthUser | null) => {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(getStoredUser())
     const isAuthenticated = Boolean(user)
+    const queryClient = useQueryClient()
 
     const logout = () => {
         setStoredUser(null)
         setUser(null)
+        queryClient.clear()
     }
 
     const handleSetUser = (user: AuthUser) => {

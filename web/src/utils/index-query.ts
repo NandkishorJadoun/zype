@@ -25,4 +25,5 @@ export const indexQueryOptions = (token: string) =>
     queryOptions({
         queryKey: ['index', token],
         queryFn: ({ signal }) => fetchChatsAndUsers(token, signal),
+        staleTime: 30_000,
     })

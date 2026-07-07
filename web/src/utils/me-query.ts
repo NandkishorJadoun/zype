@@ -17,6 +17,7 @@ export const meQueryOptions = (token: string) =>
     queryOptions({
         queryKey: ['me'],
         queryFn: ({ signal }) => fetchMe(token, signal),
+        staleTime: 5 * 60 * 1000,
     })
 
 export const updateProfile = async ({ token, formData }: { token: string; formData: FormData }) => {

@@ -12,4 +12,5 @@ export const userQueryOptions = (token: string, userId: string) =>
     queryOptions({
         queryKey: ['users', userId, token],
         queryFn: ({ signal }) => fetchUser(token, userId, signal),
+        staleTime: 5 * 60 * 1000,
     })

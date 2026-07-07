@@ -5,21 +5,16 @@ import { ArrowLeft02Icon, Pen } from '@hugeicons/core-free-icons';
 import { UserAvatar } from '../../components/UserAvatar';
 import { useEffect, useState } from 'react';
 import type { FormValidationError, User } from '../../types';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import {  meQueryOptions, updateProfile } from '../../utils/me-query';
+import { ValidationError } from '../../utils/validation-error';
 
 export const Route = createFileRoute('/_authenticated/users/me_/edit')({
   loader: async ({ context }) => {
-    const { token } = context.user
-    const BASE_URL = import.meta.env.VITE_API_URL;
-    const options = { headers: { Authorization: `Bearer ${token}` } }
-
-    const res = await fetch(`${BASE_URL}/users/me`, options)
-
-    if (!res.ok) {
-      throw new Error("Fail to load profile")
-    }
-
-    const user = await res.json()
-    return user;
+    const { user, queryClient } = context
+    const { token } = user
+    await queryClient.ensureQueryData(meQueryOptions(token))
+    return { token, queryClient }
   },
   component: RouteComponent,
 })
@@ -28,11 +23,25 @@ function RouteComponent() {
   const navigate = useNavigate();
   const router = useRouter()
   const canGoBack = useCanGoBack()
-
-  const user: User = Route.useLoaderData();
-  const errors: FormValidationError[] | undefined = [] // useActionData();
-
+  const { token, queryClient } = Route.useLoaderData();
+  const { data } = useQuery(meQueryOptions(token))
+  const { username, avatar, about }: User = data.user;
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const [validationErrors, setValidationErrors] = useState<FormValidationError[] | null>(null);
+
+  const { mutate } = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+      navigate({ to: "/users/me" });
+    },
+    onError: (err) => {
+      if (err instanceof ValidationError) {
+        setValidationErrors((err.errors))
+      }
+    }
+  });
 
   useEffect(() => {
     return () => {
@@ -47,7 +56,18 @@ function RouteComponent() {
     setPreviewUrl(file ? URL.createObjectURL(file) : null);
   };
 
-  const { username, avatar, about } = user;
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const target = event.currentTarget;
+    const formData = new FormData(target);
+
+    const avatar = formData.get("avatar") as File
+    if (!avatar.size || !avatar.name.length) {
+      formData.delete("avatar")
+    }
+
+    mutate({ token, formData })
+  };
 
   return (
     <div className="flex-1 overflow-hidden rounded-2xl border dark:border-slate-800 dark:bg-slate-900/90 overflow-y-auto">
@@ -65,10 +85,8 @@ function RouteComponent() {
       </header>
 
       <form
-        className="px-4 py-6 max-w-md mx-auto flex flex-col gap-4 "
-        action="/users/me/edit"
-        encType="multipart/form-data"
-        method="patch"
+        className="px-4 py-6 max-w-md mx-auto flex flex-col gap-4"
+        onSubmit={handleSubmit}
       >
         <div className="text-center text-nowrap relative mx-auto size-40 rounded-full border border-slate-700 bg-slate-950/40 shadow-xl">
           {previewUrl ? (
@@ -96,7 +114,7 @@ function RouteComponent() {
             onChange={handleFileChange}
           />
 
-          <FieldErrors fieldName="avatar" validationErrors={errors} />
+          <FieldErrors fieldName="avatar" validationErrors={validationErrors} />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -110,12 +128,12 @@ function RouteComponent() {
             required
             placeholder="johndoe123"
             className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
-            maxLength={10}
+            maxLength={100}
             minLength={3}
             defaultValue={username}
           />
 
-          <FieldErrors fieldName="username" validationErrors={errors} />
+          <FieldErrors fieldName="username" validationErrors={validationErrors} />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -130,7 +148,7 @@ function RouteComponent() {
             rows={3}
           />
 
-          <FieldErrors fieldName="about" validationErrors={errors} />
+          <FieldErrors fieldName="about" validationErrors={validationErrors} />
         </div>
 
         <div className="flex font-semibold gap-2">

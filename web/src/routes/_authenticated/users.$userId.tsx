@@ -1,23 +1,10 @@
 import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { createFileRoute, redirect, useCanGoBack, useRouter } from '@tanstack/react-router'
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { UserAvatar } from '../../components/UserAvatar';
 import type { User } from '../../types';
-
-const fetchUser = async (token: string, userId: string, signal: AbortSignal) => {
-  const BASE_URL = import.meta.env.VITE_API_URL;
-  const options = { headers: { Authorization: `Bearer ${token}` }, signal }
-  const res = await fetch(`${BASE_URL}/users/${userId}`, options)
-  if (!res.ok) throw new Error("Fail to load profile")
-  return res.json()
-}
-
-const userQueryOptions = (token: string, userId: string) =>
-  queryOptions({
-    queryKey: ['users', userId, token],
-    queryFn: ({ signal }) => fetchUser(token, userId, signal),
-  })
+import { userQueryOptions } from '../../utils/users-query';
 
 export const Route = createFileRoute('/_authenticated/users/$userId')({
   loader: async ({ context, params }) => {

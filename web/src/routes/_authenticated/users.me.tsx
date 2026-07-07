@@ -1,23 +1,10 @@
 import { createFileRoute, Link, useCanGoBack, useRouter } from '@tanstack/react-router'
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import {  useQuery } from '@tanstack/react-query'
 import { UserAvatar } from '../../components/UserAvatar';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft02Icon, Edit03Icon } from '@hugeicons/core-free-icons';
 import type { User } from '../../types';
-
-const fetchMe = async (token: string, signal: AbortSignal) => {
-  const BASE_URL = import.meta.env.VITE_API_URL;
-  const options = { headers: { Authorization: `Bearer ${token}` }, signal }
-  const res = await fetch(`${BASE_URL}/users/me`, options)
-  if (!res.ok) throw new Error("Fail to load profile")
-  return res.json()
-}
-
-const meQueryOptions = (token: string) =>
-  queryOptions({
-    queryKey: ['me'],
-    queryFn: ({ signal }) => fetchMe(token, signal),
-  })
+import { meQueryOptions } from '../../utils/me-query';
 
 export const Route = createFileRoute('/_authenticated/users/me')({
   loader: async ({ context }) => {

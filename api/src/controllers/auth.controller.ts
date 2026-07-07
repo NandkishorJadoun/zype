@@ -59,7 +59,7 @@ const postSignIn = async (req: Request, res: Response, next: NextFunction) => {
         const { message } = info;
         const fieldName = message.includes("Email") ? "email" : "password";
 
-        return res.status(401).json({ fieldName, message });
+        return res.status(401).json({ errors: [{ fieldName, message }] });
       }
 
       req.login(user, { session: false }, (err) => {

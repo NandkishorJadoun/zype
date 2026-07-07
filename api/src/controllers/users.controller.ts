@@ -68,7 +68,7 @@ const getUserProfile = async (req: Request, res: Response, next: NextFunction) =
             return res.status(404).json({ message: `User with ID "${userId}" not found` })
         }
 
-        return res.status(200).json(user)
+        return res.status(200).json({ user })
     } catch (error) {
         next(error)
     }
@@ -94,7 +94,7 @@ const getCurrentUserProfile = async (req: Request, res: Response, next: NextFunc
             }
         })
 
-        return res.status(200).json(user)
+        return res.status(200).json({ user })
     } catch (error) {
         next(error)
     }

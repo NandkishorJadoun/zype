@@ -1,4 +1,4 @@
-import { app } from '../src/app'
+import app from '../src/app'
 import { expect, describe, it, beforeAll, afterAll, beforeEach } from 'vitest'
 import request from "supertest"
 import { prisma } from "../src/libs/prisma"
@@ -177,7 +177,6 @@ describe("DELETE /chats/:chatId", async () => {
 
         const res = await request(app).delete(`/chats/${user1Chat?.id}`).set('Authorization', `Bearer ${token}`)
 
-        console.log(res.body)
         expect(res.status).toBe(204)
     })
 })

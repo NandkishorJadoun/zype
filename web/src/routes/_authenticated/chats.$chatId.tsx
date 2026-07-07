@@ -1,11 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import type { Chat } from '../../types';
 import { ChatHeader } from '../../components/ChatHeader';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { SentIcon } from '@hugeicons/core-free-icons';
 import { chatQueryOptions, postMessage } from '../../utils/chat-query';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { formatTime } from '../../utils/format-time';
+import { ChatForm } from '../../components/ChatForm';
 
 export const Route = createFileRoute('/_authenticated/chats/$chatId')({
   loader: async ({ context, params }) => {
@@ -32,7 +31,7 @@ function RouteComponent() {
     }
   })
 
-  const submitMessageHandler = async (event: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmitMessage = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const target = event.currentTarget;
@@ -74,23 +73,7 @@ function RouteComponent() {
           );
         })}
       </main>
-      <form
-        onSubmit={submitMessageHandler}
-        className=" border p-1 mx-3 mb-2 dark:border-slate-700 dark:bg-slate-950/15 backdrop-blur-xs flex gap-1 rounded-4xl h-16 items-center"
-      >
-        <textarea
-          rows={1}
-          className="focus:outline-0 focus:outline-blue-600 px-3 py-3 flex-1 resize-none rounded-4xl"
-          name="message"
-          placeholder="Write Your Message..."
-        />
-        <button
-          disabled={isPending}
-          className="bg-blue-600 font-bold p-3.5 rounded-full active:scale-[0.95] transition-all duration-200 shadow-lg shadow-blue-900/20 disabled:opacity-50"
-        >
-          <HugeiconsIcon icon={SentIcon} strokeWidth={2.5} />
-        </button>
-      </form>
+      <ChatForm isPending={isPending} submitHandler={handleSubmitMessage} />
     </div>
   );
 };

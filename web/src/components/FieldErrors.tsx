@@ -5,21 +5,9 @@ export const FieldErrors = ({
   validationErrors,
 }: {
   fieldName: string;
-  validationErrors:
-    | null
-    | undefined
-    | FormValidationError
-    | FormValidationError[];
+  validationErrors: FormValidationError[] | null;
 }) => {
   if (!validationErrors) return null;
-
-  if (!Array.isArray(validationErrors)) {
-    return (
-      validationErrors.fieldName === fieldName && (
-        <p className="text-red-500">{validationErrors.message}</p>
-      )
-    );
-  }
 
   const fieldValidationErrors = validationErrors.filter(
     (validationError) => validationError.fieldName === fieldName,

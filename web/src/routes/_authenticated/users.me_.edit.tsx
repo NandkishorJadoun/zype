@@ -6,8 +6,10 @@ import { UserAvatar } from '../../components/UserAvatar';
 import { useEffect, useState } from 'react';
 import type { FormValidationError, User } from '../../types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import {  meQueryOptions, updateProfile } from '../../utils/me-query';
+import { meQueryOptions, updateProfile } from '../../utils/me-query';
 import { ValidationError } from '../../utils/validation-error';
+import { UsernameField } from '../../components/UsernameField';
+import { AboutField } from '../../components/AboutField';
 
 export const Route = createFileRoute('/_authenticated/users/me_/edit')({
   loader: async ({ context }) => {
@@ -117,39 +119,8 @@ function RouteComponent() {
           <FieldErrors fieldName="avatar" validationErrors={validationErrors} />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="username">
-            Username<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            required
-            placeholder="johndoe123"
-            className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5"
-            maxLength={100}
-            minLength={3}
-            defaultValue={username}
-          />
-
-          <FieldErrors fieldName="username" validationErrors={validationErrors} />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label htmlFor="about">About</label>
-          <textarea
-            name="about"
-            id="about"
-            placeholder="Write your about here..."
-            className="border dark:border-slate-700 dark:bg-slate-800  rounded-xl focus:outline-2 focus:outline-blue-600 px-3 py-2.5 resize-none"
-            maxLength={50}
-            defaultValue={about}
-            rows={3}
-          />
-
-          <FieldErrors fieldName="about" validationErrors={validationErrors} />
-        </div>
+        <UsernameField validationErrors={validationErrors} value={username} />
+        <AboutField validationErrors={validationErrors} about={about} />
 
         <div className="flex font-semibold gap-2">
           <button

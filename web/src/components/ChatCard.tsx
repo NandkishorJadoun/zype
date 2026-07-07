@@ -14,7 +14,6 @@ export const ChatCard = ({ chat, token }: { chat: Chat, token: string }) => {
   const { mutate, isPending } = useMutation({
     mutationFn: deleteChat,
     onSuccess: () => {
-      console.log("SUCCESS")
       queryClient.invalidateQueries({ queryKey: ['index'] })
     }
   })
@@ -42,7 +41,6 @@ export const ChatCard = ({ chat, token }: { chat: Chat, token: string }) => {
   const handleDeleteChat = () => {
     mutate({ token, chatId: chat.id }, {
       onSuccess: () => {
-      console.log("SUCCESS")
         closeDialog();
         if (isCurrentChat) {
           navigate({ to: "/" })

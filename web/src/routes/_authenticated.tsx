@@ -86,21 +86,15 @@ function RouteComponent() {
             </div>
             <section className="p-2 dark:bg-slate-900 dark:border-slate-800 border rounded-b-2xl flex flex-col flex-1 overflow-y-auto">
               {activeTab === 0 ? (
-                data ? (
-                  data.chats.map((chat: Chat) => {
-                    return <ChatCard key={chat.id} chat={chat} />;
-                  })
+                data && data.chats.length > 0 ? (
+                  data.chats.map((chat: Chat) => <ChatCard key={chat.id} chat={chat} token={token} />)
                 ) : (
                   <p className="m-auto text-slate-500 text-sm">No chats yet</p>
                 )
-              ) : data ? (
-                data.users.map((user: User) => {
-                  return <UserCard key={user.id} user={user} />;
-                })
+              ) : data && data.users.length > 0 ? (
+                data.users.map((user: User) => <UserCard key={user.id} user={user} />)
               ) : (
-                <p className="m-auto text-slate-500 text-sm">
-                  No user available
-                </p>
+                <p className="m-auto text-slate-500 text-sm">No user available</p>
               )}
             </section>
           </div>

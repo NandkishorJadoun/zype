@@ -1,69 +1,59 @@
 import { SentIcon, SmilePlusIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { createFileRoute, Navigate, useRouter } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { ChatHeader } from '../../components/ChatHeader';
 import type { Chat, User } from '../../types';
-import React, { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createChat, userChatQueryOptions } from '../../utils/user-chat-query';
+
 
 export const Route = createFileRoute('/_authenticated/chats/user/$userId')({
   loader: async ({ context, params }) => {
     const { userId } = params
-    const { token } = context.user
-    const BASE_URL = import.meta.env.VITE_API_URL;
-    const options = { headers: { Authorization: `Bearer ${token}` } }
+    const { user, queryClient } = context
+    const { token } = user
 
-    const res = await fetch(`${BASE_URL}/chats/user/${userId}`, options)
+    const { chat }: { chat: Chat } = await queryClient.ensureQueryData(userChatQueryOptions(token, userId))
 
-    if (!res.ok) {
-      throw new Error("Fail to load chat")
+    if (chat) {
+      throw redirect({
+        to: "/chats/$chatId",
+        params: { chatId: chat.id }
+      })
     }
 
-    const { user, chat } = await res.json()
-    return { user, chat, token };
+    return { token, queryClient, userId };
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { user, chat, token }: { user: User; chat: Chat | null; token: string } = Route.useLoaderData();
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState("hello this is testing!")
+  const { token, queryClient, userId } = Route.useLoaderData()
+  const { data } = useQuery(userChatQueryOptions(token, userId))
+  const { user }: { user: User } = data
 
-  if (chat) {
-    return <Navigate to='/chats/$chatId' params={{ chatId: chat.id }} />;
-  }
+  const navigate = useNavigate()
 
-  const createChatHandler = async (e: React.SubmitEvent) => {
-    e.preventDefault()
-
-    if (!message.trim()) return
-    setIsLoading(true)
-
-    const url = `${import.meta.env.VITE_API_URL}/chats/user/${user.id}`
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ message }),
+  const { mutate, isPending } = useMutation({
+    mutationFn: createChat,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['index'] })
+      const { id }: Chat = data
+      navigate({ to: "/chats/$chatId", params: { chatId: id } })
     }
+  })
 
-    try {
-      const res = await fetch(url, options)
+  const handleCreateChat = async (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
-      if (!res.ok) {
-        throw new Error("Failed to create chat")
-      }
-
-      await router.invalidate()
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
+    const target = event.currentTarget;
+    const formData = new FormData(target);
+    const message = formData.get("message")
+    if (!message || typeof message !== "string" || !message.trim()) return
+    mutate({ token, userId, formData }, {
+      onSuccess: () => target.reset()
+    })
+    target.reset()
   }
 
   return (
@@ -83,19 +73,17 @@ function RouteComponent() {
           </p>
         </div>
       </main>
-      <form onSubmit={createChatHandler}
+      <form onSubmit={handleCreateChat}
         className=" border p-1 mx-3 mb-2 dark:border-slate-700 dark:bg-slate-950/15 backdrop-blur-xs flex gap-1 rounded-4xl h-16 items-center"
       >
         <textarea
           rows={1}
           className="focus:outline-0 focus:outline-blue-600 px-3 py-3 flex-1 resize-none rounded-4xl"
           name="message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
           placeholder="Write Your Message..."
         />
         <button
-          disabled={isLoading}
+          disabled={isPending}
           className="bg-blue-600 font-bold p-3.5 rounded-full active:scale-[0.95] transition-all duration-200 shadow-lg shadow-blue-900/20 disabled:opacity-50"
         >
           <HugeiconsIcon icon={SentIcon} strokeWidth={2.5} />

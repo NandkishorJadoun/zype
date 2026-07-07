@@ -1,16 +1,23 @@
 import type { Chat } from "../types";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { User02FreeIcons, MoreVerticalIcon } from "@hugeicons/core-free-icons";
-import { useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
-import { useAuth } from "../context/auth";
+import { useRef } from "react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteChat } from "../utils/delete-chat-query";
 
-export const ChatCard = ({ chat }: { chat: Chat }) => {
-  const { user: currUser } = useAuth()
-  const router = useRouter()
+export const ChatCard = ({ chat, token }: { chat: Chat, token: string }) => {
+  const queryClient = useQueryClient()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const [isLoading, setIsLoading] = useState(false)
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: deleteChat,
+    onSuccess: () => {
+      console.log("SUCCESS")
+      queryClient.invalidateQueries({ queryKey: ['index'] })
+    }
+  })
 
   const { id } = chat;
   const user = chat.users[0];
@@ -32,36 +39,16 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
 
   const isCurrentChat = pathname.includes(id)
 
-  const deleteChatAction = async () => {
-    setIsLoading(true)
-    const url = `${import.meta.env.VITE_API_URL}/chats/${id}`
-    const options = {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${currUser?.token}`
+  const handleDeleteChat = () => {
+    mutate({ token, chatId: chat.id }, {
+      onSuccess: () => {
+      console.log("SUCCESS")
+        closeDialog();
+        if (isCurrentChat) {
+          navigate({ to: "/" })
+        }
       }
-    }
-
-    try {
-      const res = await fetch(url, options)
-
-      if (!res.ok) {
-        throw new Error("Failed to delete chat")
-      }
-
-      router.invalidate()
-
-      if (isCurrentChat) {
-        navigate({ to: "/" })
-      }
-
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
-      closeDialog()
-    }
-
+    })
   }
 
   return (
@@ -142,9 +129,9 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
 
           <div className="flex flex-col sm:flex-row-reverse gap-3">
             <button
-              disabled={isLoading}
+              disabled={isPending}
               className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 font-semibold rounded-xl transition-colors active:scale-95 disabled:opacity-50"
-              onClick={deleteChatAction}
+              onClick={handleDeleteChat}
             >
               Delete Chat
             </button>

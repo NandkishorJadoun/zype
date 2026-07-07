@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_authenticated/chats/$chatId')({
     const { user, queryClient } = context
     const { token } = user
 
-    await context.queryClient.ensureQueryData(chatQueryOptions(token, chatId))
+    await queryClient.ensureQueryData(chatQueryOptions(token, chatId))
     return { token, queryClient, chatId }
   },
   component: RouteComponent,

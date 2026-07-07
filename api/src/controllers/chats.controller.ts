@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../libs/prisma.js";
-import { Prisma, type Chat } from "@prisma/client";
+import { Prisma, type Chat } from "../../generated/prisma/index.js";
 
 export const getChats = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -32,7 +32,7 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
             }
         })
 
-        return res.status(200).json(chats)
+        return res.status(200).json({ chats })
 
     } catch (error) {
 

@@ -1,0 +1,143 @@
+import { createFileRoute, useCanGoBack, useNavigate, useRouter } from '@tanstack/react-router'
+import { FieldErrors } from '../../components/FieldErrors';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft02Icon, Pen } from '@hugeicons/core-free-icons';
+import { UserAvatar } from '../../components/UserAvatar';
+import { useEffect, useState } from 'react';
+import type { FormValidationError, User } from '../../types';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { meQueryOptions, updateProfile } from '../../utils/me-query';
+import { ValidationError } from '../../utils/validation-error';
+import { UsernameField } from '../../components/UsernameField';
+import { AboutField } from '../../components/AboutField';
+
+export const Route = createFileRoute('/_authenticated/users/me_/edit')({
+  loader: async ({ context }) => {
+    const { user, queryClient } = context
+    const { token } = user
+    await queryClient.ensureQueryData(meQueryOptions(token))
+    return { token, queryClient }
+  },
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  const navigate = useNavigate();
+  const router = useRouter()
+  const canGoBack = useCanGoBack()
+  const { token, queryClient } = Route.useLoaderData();
+  const { data } = useQuery(meQueryOptions(token))
+  const { username, avatar, about }: User = data.user;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const [validationErrors, setValidationErrors] = useState<FormValidationError[] | null>(null);
+
+  const { mutate } = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+      navigate({ to: "/users/me" });
+    },
+    onError: (err) => {
+      if (err instanceof ValidationError) {
+        setValidationErrors((err.errors))
+      }
+    }
+  });
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setPreviewUrl(file ? URL.createObjectURL(file) : null);
+  };
+
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const target = event.currentTarget;
+    const formData = new FormData(target);
+
+    const avatar = formData.get("avatar") as File
+    if (!avatar.size || !avatar.name.length) {
+      formData.delete("avatar")
+    }
+
+    mutate({ token, formData })
+  };
+
+  return (
+    <div className="flex-1 overflow-hidden rounded-2xl border dark:border-slate-800 dark:bg-slate-900/90 overflow-y-auto">
+      <header className="relative flex items-center justify-center border-b border-slate-800 px-4 py-4">
+        <button
+          onClick={() => router.history.back()}
+          disabled={!canGoBack}
+          className="absolute left-4 inline-flex items-center justify-center rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
+          aria-label="Go back"
+        >
+          <HugeiconsIcon icon={ArrowLeft02Icon} strokeWidth={2.5} />
+        </button>
+
+        <h1 className="font-semibold text-white">Edit Profile</h1>
+      </header>
+
+      <form
+        className="px-4 py-6 max-w-md mx-auto flex flex-col gap-4"
+        onSubmit={handleSubmit}
+      >
+        <div className="text-center text-nowrap relative mx-auto size-40 rounded-full border border-slate-700 bg-slate-950/40 shadow-xl">
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="size-full object-cover rounded-full"
+            />
+          ) : (
+            <UserAvatar avatar={avatar} username={username} />
+          )}
+
+          <label
+            htmlFor="avatar"
+            className="absolute bottom-0 right-2 flex items-center justify-center bg-blue-600 p-2 rounded-full"
+          >
+            <HugeiconsIcon icon={Pen} />
+          </label>
+          <input
+            type="file"
+            name="avatar"
+            id="avatar"
+            accept="image/*"
+            className="opacity-0 size-0"
+            onChange={handleFileChange}
+          />
+
+          <FieldErrors fieldName="avatar" validationErrors={validationErrors} />
+        </div>
+
+        <UsernameField validationErrors={validationErrors} value={username} />
+        <AboutField validationErrors={validationErrors} about={about} />
+
+        <div className="flex font-semibold gap-2">
+          <button
+            type="submit"
+            className="bg-blue-600 flex-1 rounded-lg py-1.5"
+          >
+            Submit
+          </button>
+          <button
+            onClick={() => navigate({ to: "/users/me" })}
+            type="button"
+            className="bg-slate-600 flex-1 rounded-lg py-1.5"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};

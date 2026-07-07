@@ -1,21 +1,28 @@
-import { Link, NavLink, useFetcher, useLocation } from "react-router";
 import type { Chat } from "../types";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { User02FreeIcons, MoreVerticalIcon } from "@hugeicons/core-free-icons";
 import { useRef } from "react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteChat } from "../utils/delete-chat-query";
 
-export const ChatCard = ({ chat }: { chat: Chat }) => {
+export const ChatCard = ({ chat, token }: { chat: Chat, token: string }) => {
+  const queryClient = useQueryClient()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: deleteChat,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['index'] })
+    }
+  })
+
   const { id } = chat;
   const user = chat.users[0];
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const fetcher = useFetcher();
-  const { pathname } = useLocation();
-
   const openDialog = () => dialogRef.current?.showModal();
   const closeDialog = () => dialogRef.current?.close();
-
-  const isDeleting = fetcher.formData?.get("id") === String(id);
-  if (isDeleting) return null;
 
   const message = chat.messages[0].data;
 
@@ -29,21 +36,34 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
     <HugeiconsIcon icon={User02FreeIcons} />
   );
 
+  const isCurrentChat = pathname.includes(id)
+
+  const handleDeleteChat = () => {
+    mutate({ token, chatId: chat.id }, {
+      onSuccess: () => {
+        closeDialog();
+        if (isCurrentChat) {
+          navigate({ to: "/" })
+        }
+      }
+    })
+  }
+
   return (
     <div className=" py-3 px-2 flex items-center gap-4 has-[.active]:bg-slate-800 rounded-xl">
       <Link
-        to={`/users/${user.id}`}
+        to="/users/$userId" params={{ userId: user.id }}
         className="border dark:border-slate-700 w-10 h-10 overflow-hidden rounded-full flex dark:bg-slate-900 items-center justify-center"
       >
         {userAvatar}
       </Link>
       <div className="flex-1 flex min-w-0 justify-between items-center">
-        <NavLink className="flex-1 min-w-0" to={`/chats/${id}`}>
+        <Link className="flex-1 min-w-0" to="/chats/$chatId" params={{ chatId: id }}>
           <p className="font-semibold">{user.username}</p>
           <p className="text-sm opacity-75 min-w-0 truncate">
             {message ?? "Message..."}
           </p>
-        </NavLink>
+        </Link>
 
         <div>
           <button
@@ -71,13 +91,13 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
           >
             <div className="flex flex-col min-w-28 p-1 backdrop-blur-2xl ">
               <Link
-                to={`/chats/${id}`}
+                to="/chats/$chatId" params={{ chatId: id }}
                 className="text-left p-2 hover:bg-slate-700 rounded"
               >
                 Open Chat
               </Link>
               <Link
-                to={`/users/${user.id}`}
+                to="/users/$userId" params={{ userId: user.id }}
                 className="text-left p-2 hover:bg-slate-700 rounded"
               >
                 Profile
@@ -107,10 +127,9 @@ export const ChatCard = ({ chat }: { chat: Chat }) => {
 
           <div className="flex flex-col sm:flex-row-reverse gap-3">
             <button
-              className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 font-semibold rounded-xl transition-colors active:scale-95"
-              onClick={() =>
-                fetcher.submit({ id, pathname }, { method: "delete" })
-              }
+              disabled={isPending}
+              className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 font-semibold rounded-xl transition-colors active:scale-95 disabled:opacity-50"
+              onClick={handleDeleteChat}
             >
               Delete Chat
             </button>

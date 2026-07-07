@@ -1,4 +1,4 @@
-import { app } from '../src/app'
+import app from '../src/app'
 import { expect, describe, it, beforeEach, afterEach } from 'vitest'
 import request from "supertest"
 import { prisma } from "../src/libs/prisma"

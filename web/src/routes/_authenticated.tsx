@@ -1,19 +1,39 @@
-import { useState } from "react";
-import {
-  useLoaderData,
-  Outlet,
-  Link,
-  useNavigate,
-  useLocation,
-} from "react-router";
-import type { User, Chat } from "../types";
-import { ChatCard } from "../components/ChatCard";
-import { UserCard } from "../components/UserCard";
+import { createFileRoute, Link, Outlet, redirect, useLocation, useNavigate } from '@tanstack/react-router'
+import { UserCard } from '../components/UserCard';
+import { ChatCard } from '../components/ChatCard';
+import type { Chat, User } from '../types';
+import { useState } from 'react';
+import { useAuth } from "../context/auth";
+import { useQuery } from '@tanstack/react-query';
+import { indexQueryOptions } from '../utils/index-query';
 
-const AppLayout = () => {
+export const Route = createFileRoute('/_authenticated')({
+  beforeLoad: ({ context }) => {
+    if (!context.auth.isAuthenticated || !context.auth.user) {
+      throw redirect({
+        to: '/auth',
+      })
+    }
+    return {
+      user: context.auth.user,
+    }
+  },
+  loader: async ({ context }) => {
+    const { user, queryClient } = context
+    const { token } = user
+    await queryClient.ensureQueryData(indexQueryOptions(token))
+    return { token }
+  },
+  component: RouteComponent,
+})
+
+function RouteComponent() {
   const [activeTab, setActiveTab] = useState(0);
-  const { chats, users }: { chats: Chat[]; users: User[] } = useLoaderData();
-  const navigate = useNavigate();
+  const { token }: { token: string } = Route.useLoaderData();
+  const { data } = useQuery(indexQueryOptions(token))
+
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const { pathname } = useLocation();
   const isIndex = pathname === "/";
 
@@ -31,9 +51,8 @@ const AppLayout = () => {
           <button
             className="hover:underline"
             onClick={() => {
-              const keysToRemove = ["user", "token"];
-              keysToRemove.forEach((key) => localStorage.removeItem(key));
-              return navigate("/auth");
+              logout()
+              navigate({ to: "/auth" })
             }}
           >
             Logout
@@ -67,21 +86,15 @@ const AppLayout = () => {
             </div>
             <section className="p-2 dark:bg-slate-900 dark:border-slate-800 border rounded-b-2xl flex flex-col flex-1 overflow-y-auto">
               {activeTab === 0 ? (
-                chats.length > 0 ? (
-                  chats.map((chat) => {
-                    return <ChatCard key={chat.id} chat={chat} />;
-                  })
+                data && data.chats.length > 0 ? (
+                  data.chats.map((chat: Chat) => <ChatCard key={chat.id} chat={chat} token={token} />)
                 ) : (
                   <p className="m-auto text-slate-500 text-sm">No chats yet</p>
                 )
-              ) : users.length > 0 ? (
-                users.map((user) => {
-                  return <UserCard key={user.id} user={user} />;
-                })
+              ) : data && data.users.length > 0 ? (
+                data.users.map((user: User) => <UserCard key={user.id} user={user} />)
               ) : (
-                <p className="m-auto text-slate-500 text-sm">
-                  No user available
-                </p>
+                <p className="m-auto text-slate-500 text-sm">No user available</p>
               )}
             </section>
           </div>
@@ -91,5 +104,3 @@ const AppLayout = () => {
     </div>
   );
 };
-
-export default AppLayout;

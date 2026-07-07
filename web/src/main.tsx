@@ -1,13 +1,45 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./styles/globals.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
-import routes from "./routes";
+import { StrictMode } from 'react'
+import ReactDOM from 'react-dom/client'
+import { RouterProvider } from '@tanstack/react-router'
+import { AuthProvider, useAuth } from './context/auth'
+import { createRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import "./styles/globals.css"
 
-const router = createBrowserRouter(routes);
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 30,
+    },
+  },
+})
 
-createRoot(document.getElementById("root")!).render(
+const router = createRouter({
+  routeTree,
+  context: {
+    auth: undefined!,
+    queryClient,
+  },
+})
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+function InnerApp() {
+  const auth = useAuth()
+  return <RouterProvider router={router} context={{ auth }} />
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <InnerApp />
+      </AuthProvider>
+    </QueryClientProvider>
+  </StrictMode>
+)

@@ -5,6 +5,8 @@ import { chatQueryOptions, postMessage } from '../../utils/chat-query';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { formatTime } from '../../utils/format-time';
 import { ChatForm } from '../../components/ChatForm';
+import { useEffect } from 'react';
+import { useSocket } from '../../context/socket';
 
 export const Route = createFileRoute('/_authenticated/chats/$chatId')({
   loader: async ({ context, params }) => {
@@ -30,6 +32,21 @@ function RouteComponent() {
       queryClient.invalidateQueries({ queryKey: ['chats'] })
     }
   })
+
+  const socket = useSocket()
+
+  useEffect(() => {
+    socket.emit("joinChat", chatId);
+
+    const fetchMessage = () => queryClient.invalidateQueries({ queryKey: ['chats'] })
+    socket.on("newMessage", fetchMessage)
+
+    return () => {
+      socket.emit("leaveChat", chatId)
+      socket.off("newMessage", fetchMessage)
+    };
+
+  }, [socket, chatId, queryClient]);
 
   const handleSubmitMessage = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()

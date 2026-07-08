@@ -1,10 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
-import type { Chat } from '../../types';
+import type { Chat, Message } from '../../types';
 import { ChatHeader } from '../../components/ChatHeader';
 import { chatQueryOptions, postMessage } from '../../utils/chat-query';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { formatTime } from '../../utils/format-time';
 import { ChatForm } from '../../components/ChatForm';
+import { useEffect } from 'react';
+import { useSocket } from '../../context/socket';
 
 export const Route = createFileRoute('/_authenticated/chats/$chatId')({
   loader: async ({ context, params }) => {
@@ -25,11 +27,29 @@ function RouteComponent() {
   const receiver = users[0];
 
   const { mutate, isPending } = useMutation({
-    mutationFn: postMessage,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chats'] })
-    }
+    mutationFn: postMessage
   })
+
+  const socket = useSocket()
+
+  useEffect(() => {
+    socket.emit("joinChat", chatId);
+
+    const handleNewMessage = (message: Message) => {
+      queryClient.setQueryData(chatQueryOptions(token, chatId).queryKey, (old: Chat | undefined) => {
+        if (!old) return old;
+        return { ...old, messages: [...old.messages, message] };
+      });
+    };
+
+    socket.on("newMessage", handleNewMessage)
+
+    return () => {
+      socket.emit("leaveChat", chatId)
+      socket.off("newMessage", handleNewMessage)
+    };
+
+  }, [socket, chatId, queryClient, token]);
 
   const handleSubmitMessage = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()

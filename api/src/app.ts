@@ -5,11 +5,33 @@ import { usersRouter } from "./routes/users.router.js";
 import { chatsRouter } from "./routes/chats.router.js";
 import { UploadValidationError } from "./utils/UploadValidationError.js";
 import multer from "multer";
+import { createServer } from "node:http";
+import { Server } from 'socket.io';
+import { env } from "./schemas/env.schema.js";
 
 const app: Express = express()
+const server = createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: env.FRONTEND_URL,
+        methods: ["GET", "POST"]
+    }
+})
+
+io.on("connection", (socket) => {
+    socket.on("joinChat", (chatId) => {
+        socket.join(chatId)
+    })
+
+    socket.on("leaveChat", (chatId) => {
+        socket.leave(chatId)
+    })
+});
 
 app.use(cors())
 app.use(json())
+app.set("socketio", io);
 app.use(urlencoded({ extended: false }))
 
 app.get("/", (_req, res) => res.json({ message: "Server is running..." }))
@@ -27,4 +49,4 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     res.status(500).json({ message: "Internal Server Error" })
 })
 
-export default app;
+export default server;

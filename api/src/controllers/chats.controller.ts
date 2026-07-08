@@ -122,6 +122,9 @@ export const postChat = async (req: Request, res: Response, next: NextFunction) 
 
         const newMessage = updatedChat.messages[0];
 
+        const io = req.app.get("socketio");
+        io.to(chatId).emit("newMessage", newMessage)
+
         res.status(201).json(newMessage)
 
     } catch (error) {

@@ -7,13 +7,14 @@ import { UploadValidationError } from "./utils/UploadValidationError.js";
 import multer from "multer";
 import { createServer } from "node:http";
 import { Server } from 'socket.io';
+import { env } from "./schemas/env.schema.js";
 
 const app: Express = express()
 const server = createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: env.FRONTEND_URL,
         methods: ["GET", "POST"]
     }
 })
@@ -21,12 +22,10 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     socket.on("joinChat", (chatId) => {
         socket.join(chatId)
-        console.log(`Socket ${socket.id} joined chat: ${chatId}`);
     })
 
     socket.on("leaveChat", (chatId) => {
         socket.leave(chatId)
-        console.log(`Socket ${socket.id} left chat: ${chatId}`);
     })
 });
 

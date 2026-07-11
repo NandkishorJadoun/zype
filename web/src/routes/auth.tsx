@@ -4,11 +4,9 @@ import { useMutation } from '@tanstack/react-query'
 import { signUp, signIn } from '../utils/auth-query';
 import { ValidationError } from '../utils/validation-error';
 import type { FormValidationError } from '../types';
-import { EmailField } from '../components/EmailField';
-import { PasswordField } from '../components/PasswordField';
 import { useAuth } from '../context/auth';
 import { FormButton } from '../components/FormSubmitBtn';
-import { UsernameField } from '../components/UsernameField';
+import { FormField } from '../components/FormField';
 
 export const Route = createFileRoute('/auth')({
     beforeLoad: ({ context }) => {
@@ -71,23 +69,32 @@ function RouteComponent() {
     };
 
     return (
-        <main className="min-h-screen flex justify-center items-center max-w-3xl mx-auto border-x dark:border-slate-800 dark:bg-slate-900/90">
-            <div className=" px-4 w-full ">
-                <div className="relative flex mb-3 border dark:border-slate-700 dark:bg-slate-800 rounded-4xl">
+        <main className="min-h-screen flex justify-center items-center px-4">
+            <div className="w-full max-w-sm">
+                <div className="text-center mb-8">
+                    <h1 className="text-[1.75rem] font-semibold text-text-primary tracking-tight">
+                        Zype
+                    </h1>
+                    <p className="text-[0.8125rem] text-text-secondary mt-1.5">
+                        A better way to message
+                    </p>
+                </div>
+
+                <div className="bg-surface-secondary rounded-xl p-0.5 flex relative mb-8">
                     <div
-                        className="absolute top-1 bottom-1 rounded-3xl w-[calc(50%-4px)] bg-blue-600 transition-transform duration-200"
+                        className="absolute top-0.5 bottom-0.5 w-1/2 rounded-[18px] bg-accent transition-all duration-500 ease-spring z-0"
                         style={{
-                            transform: `translateX(${activeTab === 0 ? "4px" : "calc(100% + 4px)"})`,
+                            left: activeTab === 0 ? '2px' : 'calc(50% + 2px)',
                         }}
                     />
                     <button
-                        className="relative z-10 w-full py-3 font-semibold text-lg"
+                        className={`relative z-10 w-full py-2.5 text-[0.8125rem] font-medium tracking-[0.02em] transition-colors duration-150 ${activeTab === 0 ? 'text-white' : 'text-text-secondary'}`}
                         onClick={() => setActiveTab(0)}
                     >
                         Sign Up
                     </button>
                     <button
-                        className="relative z-10 w-full py-3 font-semibold text-lg"
+                        className={`relative z-10 w-full py-2.5 text-[0.8125rem] font-medium tracking-[0.02em] transition-colors duration-150 ${activeTab === 1 ? 'text-white' : 'text-text-secondary'}`}
                         onClick={() => setActiveTab(1)}
                     >
                         Sign In
@@ -95,30 +102,20 @@ function RouteComponent() {
                 </div>
 
                 {activeTab === 0 && (
-                    <>
-                        <p className="text-center text-2xl my-4">Create Account</p>
-                        <form className="flex flex-col gap-5" onSubmit={submitSignUpForm}>
-                            <UsernameField validationErrors={signUpValidationError} />
-                            <EmailField validationErrors={signUpValidationError} />
-                            <PasswordField validationErrors={signUpValidationError}>
-                                Set A Password
-                            </PasswordField>
-                            <FormButton isPending={isSigningUp}>Get Started</FormButton>
-                        </form>
-                    </>
+                    <form className="flex flex-col gap-5" onSubmit={submitSignUpForm}>
+                        <FormField name="username" label="Username" type="text" required minLength={3} maxLength={10} placeholder="johndoe123" validationErrors={signUpValidationError} />
+                        <FormField name="email" label="Email Address" type="email" required placeholder="johndoe@example.com" validationErrors={signUpValidationError} />
+                        <FormField name="password" label="Password" type="password" placeholder='••••••••' required minLength={8} maxLength={20} validationErrors={signUpValidationError} />
+                        <FormButton isPending={isSigningUp}>Get Started</FormButton>
+                    </form>
                 )}
 
                 {activeTab === 1 && (
-                    <>
-                        <p className="text-center text-2xl my-4">Welcome Back!</p>
-                        <form className="flex flex-col gap-5" onSubmit={submitSignInForm}>
-                            <EmailField validationErrors={signInValidationError} />
-                            <PasswordField validationErrors={signInValidationError}>
-                                Enter Password
-                            </PasswordField>
-                            <FormButton isPending={isSigningIn}>Sign In</FormButton>
-                        </form>
-                    </>
+                    <form className="flex flex-col gap-5" onSubmit={submitSignInForm}>
+                        <FormField name="email" label="Email Address" type="email" required placeholder="johndoe@example.com" validationErrors={signInValidationError} />
+                        <FormField name="password" label="Password" type="password" required minLength={8} maxLength={20} placeholder='••••••••' validationErrors={signInValidationError} />
+                        <FormButton isPending={isSigningIn}>Sign In</FormButton>
+                    </form>
                 )}
             </div>
         </main>

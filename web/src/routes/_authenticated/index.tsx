@@ -8,17 +8,19 @@ export const Route = createFileRoute('/_authenticated/')({
 
 function RouteComponent() {
   return (
-    <div className="hidden sm:flex flex-1 dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl items-center justify-center p-3 ">
-      <div className="max-w-3xs w-full p-6 text-center bg-slate-800/50 border dark:border-slate-700 rounded-2xl shadow-2xl">
+    <div className="hidden sm:flex flex-1 items-center justify-center p-8">
+      <div className="text-center max-w-[240px]">
         <HugeiconsIcon
           icon={LookLeftIcon}
+          size={32}
           strokeWidth={1.5}
-          size={40}
-          className="mx-auto mb-4"
+          className="mx-auto mb-5 text-text-tertiary/40"
         />
-        <h3 className="font-medium text-lg mb-1">Select a chat/user</h3>
-        <p className="text-slate-400 text-sm">
-          Select a conversation to start messaging.
+        <h2 className="font-semibold text-[0.9375rem] text-text-secondary mb-1.5">
+          No Conversation Selected
+        </h2>
+        <p className="text-[0.8125rem] text-text-tertiary leading-relaxed">
+          Choose a chat from the sidebar to start messaging.
         </p>
       </div>
     </div>

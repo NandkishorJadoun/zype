@@ -1,6 +1,5 @@
 import { ValidationError } from "./validation-error";
-
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../config";
 
 export const signUp = async (formData: FormData) => {
 
@@ -10,7 +9,7 @@ export const signUp = async (formData: FormData) => {
         password: formData.get("password"),
     }
 
-    const res = await fetch(`${BASE_URL}/auth/signup`, {
+    const res = await fetch(`${API_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -34,7 +33,7 @@ export const signIn = async (formData: FormData) => {
         password: formData.get("password"),
     }
 
-    const res = await fetch(`${BASE_URL}/auth/signin`, {
+    const res = await fetch(`${API_URL}/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

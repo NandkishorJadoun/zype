@@ -1,33 +1,26 @@
 import type { User } from "../types";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { User02FreeIcons } from "@hugeicons/core-free-icons";
 import { Link } from "@tanstack/react-router";
+import { UserAvatar } from "./UserAvatar";
 
 export const UserCard = ({ user }: { user: User }) => {
-  const { username, id, avatar, about } = user;
+  const { username, id, about, avatar } = user;
 
   return (
-    <div className="py-3 px-2 flex items-center gap-4 has-[.active]:bg-slate-800 rounded-xl">
-      <Link
-        to="/users/$userId" params={{ userId: id }}
-        className="border dark:border-slate-700 w-10 h-10 rounded-full flex dark:bg-slate-900 items-center justify-center"
-      >
-        {avatar ? (
-          <img
-            src={avatar}
-            alt={`${username}'s profile`}
-            className="size-full object-cover rounded-full"
-          />
-        ) : (
-          <HugeiconsIcon icon={User02FreeIcons} />
-        )}
-      </Link>
-      <Link to="/chats/user/$userId" params={{ userId: id }} className="min-w-0 flex-1">
-        <p className="font-semibold">{username}</p>
-        <p className="text-sm opacity-75 min-w-0 truncate">
-          {about || "Nothing here… for now."}
-        </p>
-      </Link>
+    <div className="rounded-xl hover:bg-surface-secondary transition-colors duration-150">
+      <div className="py-2.5 px-3 flex items-center gap-3">
+        <Link
+          to="/users/$userId" params={{ userId: id }}
+          className="size-10 rounded-full overflow-hidden flex-shrink-0 bg-surface-secondary"
+        >
+          <UserAvatar avatar={avatar} username={username} />
+        </Link>
+        <Link to="/chats/user/$userId" params={{ userId: id }} className="min-w-0 flex-1">
+          <p className="font-semibold text-[0.9375rem] text-text-primary">{username}</p>
+          <p className="text-[0.8125rem] text-text-tertiary truncate mt-0.5">
+            {about || "Nothing here\u2026 for now."}
+          </p>
+        </Link>
+      </div>
     </div>
   );
 };

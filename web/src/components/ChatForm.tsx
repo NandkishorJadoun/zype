@@ -10,19 +10,20 @@ export const ChatForm = ({ isPending, submitHandler }: ChatFormProps) => {
     return (
         <form
             onSubmit={submitHandler}
-            className=" border p-1 mx-3 mb-2 dark:border-slate-700 dark:bg-slate-950/15 backdrop-blur-xs flex gap-1 rounded-4xl h-16 items-center"
+            className="flex items-end gap-2 px-4 py-3 border-t border-separator bg-surface-elevated/60 glass"
         >
             <textarea
                 rows={1}
-                className="focus:outline-0 focus:outline-blue-600 px-3 py-3 flex-1 resize-none rounded-4xl"
+                className="flex-1 resize-none rounded-2xl bg-surface-secondary px-4 py-3 text-[0.9375rem] text-text-primary placeholder:text-text-tertiary leading-relaxed min-h-[44px] max-h-[120px]"
                 name="message"
-                placeholder="Write Your Message..."
+                placeholder="Message..."
             />
             <button
                 disabled={isPending}
-                className="bg-blue-600 font-bold p-3.5 rounded-full active:scale-[0.95] transition-all duration-200 shadow-lg shadow-blue-900/20 disabled:opacity-50"
+                className="bg-accent text-white rounded-full size-[44px] flex items-center justify-center flex-shrink-0 active:scale-90 transition-all duration-150 disabled:opacity-50"
+                aria-label="Send message"
             >
-                <HugeiconsIcon icon={SentIcon} strokeWidth={2.5} />
+                <HugeiconsIcon icon={SentIcon} size={20} strokeWidth={2.5} />
             </button>
         </form>
     )

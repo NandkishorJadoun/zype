@@ -1,36 +1,36 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowLeft02Icon, User02FreeIcons } from "@hugeicons/core-free-icons";
+import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import type { User } from "../types";
 import { Link } from "@tanstack/react-router";
+import { UserAvatar } from "./UserAvatar";
 
 export const ChatHeader = ({ user }: { user: User }) => {
   const { id, username, avatar } = user;
+
   return (
-    <div className="dark:bg-slate-900 relative flex justify-center items-center border-b px-3 py-4 dark:border-slate-800 rounded-t-2xl">
+    <div className="bg-surface-elevated/80 glass relative flex justify-center items-center border-b border-separator px-3 h-[52px] flex-shrink-0 rounded-t-xl">
       <Link
         to={"/"}
-        className="absolute left-4 inline-flex items-center justify-center rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
+        className="absolute left-3 inline-flex items-center justify-center size-[32px] rounded-full text-text-secondary hover:bg-surface-secondary hover:text-text-primary transition-all duration-150"
         aria-label="Go back"
       >
         <HugeiconsIcon
           icon={ArrowLeft02Icon}
-          color="currentColor"
+          size={18}
           strokeWidth={2.5}
         />
       </Link>
-      <Link to="/users/$userId" params={{ userId: id }} className="flex items-center gap-2">
-        <div className="border dark:border-slate-700 w-9 h-9 rounded-full flex dark:bg-slate-900 items-center justify-center">
-          {avatar ? (
-            <img
-              className="size-full object-cover rounded-full"
-              src={avatar}
-              alt={`${username}'s profile`}
-            />
-          ) : (
-            <HugeiconsIcon icon={User02FreeIcons} />
-          )}
+      <Link
+        to="/users/$userId"
+        params={{ userId: id }}
+        className="flex items-center gap-2.5 min-w-0"
+      >
+        <div className="size-8 rounded-full bg-surface-secondary overflow-hidden flex-shrink-0">
+          <UserAvatar avatar={avatar} username={username} />
         </div>
-        <p className="font-semibold">{username}</p>
+        <p className="font-semibold text-[0.9375rem] text-text-primary truncate">
+          {username}
+        </p>
       </Link>
     </div>
   );

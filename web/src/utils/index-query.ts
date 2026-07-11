@@ -1,11 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
+import { API_URL } from "../config";
 
 export const fetchChatsAndUsers = async (token: string, signal: AbortSignal) => {
-    const BASE_URL = import.meta.env.VITE_API_URL;
     const options = { headers: { Authorization: `Bearer ${token}` }, signal }
     const [chatsRes, usersRes] = await Promise.all([
-        fetch(`${BASE_URL}/chats`, options),
-        fetch(`${BASE_URL}/users`, options),
+        fetch(`${API_URL}/chats`, options),
+        fetch(`${API_URL}/users`, options),
     ]);
 
     if (!chatsRes.ok || !usersRes.ok) {

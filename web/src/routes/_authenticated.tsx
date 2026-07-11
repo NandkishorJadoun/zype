@@ -7,6 +7,8 @@ import { useAuth } from "../context/auth";
 import { useQuery } from '@tanstack/react-query';
 import { indexQueryOptions } from '../utils/index-query';
 import { SocketProvider } from '../context/socket';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { User02Icon } from '@hugeicons/core-free-icons';
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
@@ -40,68 +42,88 @@ function RouteComponent() {
 
   return (
     <SocketProvider>
-      <div className="h-screen flex flex-col">
-        <header className="p-4 flex justify-between items-center dark:border-slate-800 border dark:bg-slate-900 rounded-2xl mt-3 mx-3 font-semibold">
-          <Link className="text-2xl" to={"/"}>
+      <div className="h-screen flex flex-col bg-surface-primary">
+        <header className={`bg-surface-elevated/80 glass border-b border-separator h-[52px] items-center justify-between px-4 flex-shrink-0 ${isIndex ? 'flex' : 'hidden sm:flex'}`}>
+          <Link
+            to="/"
+            className="text-[1.0625rem] font-medium text-text-primary no-underline tracking-tight"
+          >
             Zype
           </Link>
-          <div className="flex gap-3">
-            <Link to={`/users/me`} className="hover:underline">
-              User
-            </Link>
 
+          <div className="flex items-center gap-1.5">
+            <Link
+              to="/users/me"
+              className="size-[32px] rounded-full bg-surface-secondary flex items-center justify-center text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors duration-150"
+              aria-label="Profile"
+            >
+              <HugeiconsIcon icon={User02Icon} size={18} strokeWidth={2} />
+            </Link>
             <button
-              className="hover:underline"
               onClick={() => {
                 logout()
                 navigate({ to: "/auth" })
               }}
+              className="text-[0.8125rem] font-medium text-text-secondary hover:text-text-primary transition-colors duration-150 px-2 py-1.5 rounded-lg hover:bg-surface-secondary"
             >
               Logout
             </button>
           </div>
         </header>
-        <main className="flex gap-3 p-3 flex-1 overflow-hidden">
-          {
-            <div
-              className={`sm:w-[35%] sm:flex ${isIndex ? "flex" : "hidden"} w-full flex-col`}
-            >
-              <div className="relative flex border dark:border-slate-800 dark:bg-slate-900 rounded-t-2xl border-b-0">
+
+        <main className="flex gap-3 p-3 sm:p-4 flex-1 overflow-hidden">
+          <div
+            className={`sm:w-[35%] sm:flex ${isIndex ? "flex" : "hidden"} w-full flex-col`}
+          >
+            <div className="px-3 pt-3 pb-2">
+              <div className="bg-surface-secondary rounded-xl p-0.5 flex relative">
                 <div
-                  className="absolute bottom-1 rounded-xl w-[calc(50%-4px)] border-blue-600 transition-transform duration-200 border-b-4"
+                  className="absolute top-0.5 bottom-0.5 w-1/2 rounded-[18px] bg-accent transition-all duration-500 ease-spring z-0"
                   style={{
-                    transform: `translateX(${activeTab === 0 ? "4px" : "calc(100% + 4px)"})`,
+                    left: activeTab === 0 ? '2px' : 'calc(50% + 2px)',
                   }}
                 />
                 <button
-                  className="relative z-10 w-full py-4 font-semibold text-lg"
+                  className={`relative z-10 w-full py-2 text-[0.8125rem] font-medium tracking-[0.02em] transition-colors duration-150 ${activeTab === 0 ? 'text-white' : 'text-text-secondary'}`}
                   onClick={() => setActiveTab(0)}
                 >
                   Chats
                 </button>
                 <button
-                  className="relative z-10 w-full py-4 font-semibold text-lg"
+                  className={`relative z-10 w-full py-2 text-[0.8125rem] font-medium tracking-[0.02em] transition-colors duration-150 ${activeTab === 1 ? 'text-white' : 'text-text-secondary'}`}
                   onClick={() => setActiveTab(1)}
                 >
                   Users
                 </button>
               </div>
-              <section className="p-2 dark:bg-slate-900 dark:border-slate-800 border rounded-b-2xl flex flex-col flex-1 overflow-y-auto">
-                {activeTab === 0 ? (
-                  data && data.chats.length > 0 ? (
-                    data.chats.map((chat: Chat) => <ChatCard key={chat.id} chat={chat} token={token} />)
-                  ) : (
-                    <p className="m-auto text-slate-500 text-sm">No chats yet</p>
-                  )
-                ) : data && data.users.length > 0 ? (
-                  data.users.map((user: User) => <UserCard key={user.id} user={user} />)
-                ) : (
-                  <p className="m-auto text-slate-500 text-sm">No user available</p>
-                )}
-              </section>
             </div>
-          }
-          <Outlet />
+
+            <section className="flex-1 overflow-y-auto px-2 pb-2">
+              {activeTab === 0 ? (
+                data && data.chats.length > 0 ? (
+                  <div className="space-y-0.5">
+                    {data.chats.map((chat: Chat) => <ChatCard key={chat.id} chat={chat} token={token} />)}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-text-tertiary text-[0.8125rem]">No chats yet</p>
+                  </div>
+                )
+              ) : data && data.users.length > 0 ? (
+                <div className="space-y-0.5">
+                  {data.users.map((user: User) => <UserCard key={user.id} user={user} />)}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-text-tertiary text-[0.8125rem]">No users available</p>
+                </div>
+              )}
+            </section>
+          </div>
+
+          <div className="flex-1 min-w-0 flex flex-col">
+            <Outlet />
+          </div>
         </main>
       </div>
     </SocketProvider>

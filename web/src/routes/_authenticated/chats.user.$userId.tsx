@@ -57,19 +57,21 @@ function RouteComponent() {
   }
 
   return (
-    <div className="flex-1 flex flex-col dark:bg-slate-900/90 border dark:border-slate-800 rounded-2xl">
+    <div className="flex-1 flex flex-col bg-surface-primary rounded-xl overflow-hidden">
       <ChatHeader user={user} />
-      <main className="p-2 flex-1 flex items-center justify-center gap-1.5 overflow-y-auto">
-        <div className="max-w-3xs w-full p-6 text-center bg-slate-800/50 border dark:border-slate-700 rounded-2xl shadow-2xl">
+      <main className="flex-1 flex items-center justify-center p-8">
+        <div className="text-center max-w-[240px]">
           <HugeiconsIcon
             icon={SmilePlusIcon}
+            size={32}
             strokeWidth={1.5}
-            size={40}
-            className="mx-auto mb-4"
+            className="mx-auto mb-5 text-text-tertiary/40"
           />
-          <h3 className="font-medium text-lg mb-1">Start the conversation</h3>
-          <p className="text-slate-400 text-sm">
-            Send a friendly message to your friend to get things moving.
+          <h2 className="font-semibold text-[0.9375rem] text-text-secondary mb-1.5">
+            Start the Conversation
+          </h2>
+          <p className="text-[0.8125rem] text-text-tertiary leading-relaxed">
+            Send a friendly message to get things moving.
           </p>
         </div>
       </main>

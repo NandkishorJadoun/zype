@@ -16,9 +16,9 @@ export const FieldErrors = ({
   if (fieldValidationErrors.length === 0) return null;
 
   return (
-    <ul>
+    <ul className="space-y-0.5">
       {fieldValidationErrors.map((validationError, index) => (
-        <li key={index} className="text-red-500">
+        <li key={index} className="text-destructive text-[0.8125rem]">
           {validationError.message}
         </li>
       ))}
